@@ -493,12 +493,12 @@
     position: absolute;
     inset: -4px;
     border-radius: 46px;
-    background-image: var(--case-img);
-    background-size: cover;
+    background-size: contain;
+    background-repeat: no-repeat;
     background-position: center;
     z-index: 5;
     opacity: 0;
-    transition: opacity .4s;
+    transition: opacity .5s;
   }
 
   .case-overlay.loaded { opacity: 1; }
@@ -1245,20 +1245,13 @@ function renderResult(product) {
   // Update phone mockup
   applyPhoneModel();
 
-  // Apply case texture to mockup
+  // Apply case image via CSS background (bypasses CORS for display)
   const overlay = document.getElementById('case-overlay');
+  overlay.classList.remove('loaded');
   if (product.image) {
-    overlay.style.setProperty('--case-img', `url(${product.image})`);
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.onload = () => overlay.classList.add('loaded');
-    img.onerror = () => {
-      // fallback color tint
-      overlay.style.background = 'rgba(108,99,255,.15)';
-      overlay.style.border = '3px solid rgba(108,99,255,.3)';
-      overlay.classList.add('loaded');
-    };
-    img.src = product.image;
+    overlay.style.backgroundImage = `url(${product.image})`;
+    // CSS background-image doesn't need CORS — just show it
+    setTimeout(() => overlay.classList.add('loaded'), 200);
   }
 }
 
@@ -1458,33 +1451,36 @@ function buildPhoneGeometry(caseImageUrl) {
   // ── Case overlay ──
   const caseGeo = new THREE.BoxGeometry(0.79, 1.64, 0.09);
 
-  let caseMat;
+  // 3D case material — try texture, fallback to tinted transparent
+  const caseMat = new THREE.MeshStandardMaterial({
+    color: 0xffffff,
+    transparent: true,
+    opacity: 0.85,
+    metalness: 0.0,
+    roughness: 0.6,
+    side: THREE.FrontSide,
+  });
+
   if (caseImageUrl) {
     const loader = new THREE.TextureLoader();
     loader.crossOrigin = 'anonymous';
     loader.load(
       caseImageUrl,
       tex => {
+        tex.encoding = THREE.sRGBEncoding;
         caseMat.map = tex;
+        caseMat.color.set(0xffffff);
         caseMat.needsUpdate = true;
       },
       undefined,
       () => {
-        caseMat.color = new THREE.Color(0x6c63ff);
-        caseMat.opacity = 0.25;
+        // CORS blocked — show purple tint instead
+        caseMat.color = new THREE.Color(0x7c6fff);
+        caseMat.opacity = 0.3;
         caseMat.needsUpdate = true;
       }
     );
   }
-
-  caseMat = new THREE.MeshStandardMaterial({
-    color: 0xffffff,
-    transparent: true,
-    opacity: 0.9,
-    metalness: 0.0,
-    roughness: 0.8,
-    side: THREE.FrontSide,
-  });
 
   const caseMesh = new THREE.Mesh(caseGeo, caseMat);
   caseMesh.position.z = -0.005;
