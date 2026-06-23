@@ -1160,7 +1160,17 @@ async function processCode(code) {
 
   currentProduct = product;
   renderResult(product);
-  build3DScene(product.image);
+  // Pre-build 3D scene after short delay (tab may still be hidden)
+  setTimeout(() => {
+    // Switch to 3D tab temporarily to measure canvas, then back
+    const tab3d = document.getElementById('tab-3d');
+    const wasFlex = tab3d.style.display;
+    tab3d.style.display = 'block';
+    tab3d.style.visibility = 'hidden';
+    build3DScene(product.image);
+    tab3d.style.display = wasFlex;
+    tab3d.style.visibility = '';
+  }, 100);
 }
 
 async function fetchFromShopify(sku) {
@@ -1277,8 +1287,23 @@ function switchTab(tab, btn) {
   btn.classList.add('active');
   document.getElementById('tab-' + tab).classList.add('active');
 
-  if (tab === '3d' && !threeInit) {
-    build3DScene(currentProduct?.image || '');
+  if (tab === '3d') {
+    // Use rAF to ensure tab is visible before measuring canvas
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (!threeInit) {
+          build3DScene(currentProduct?.image || '');
+        } else if (threeRenderer) {
+          // Resize renderer in case canvas changed size
+          const canvas = document.getElementById('three-canvas');
+          const w = canvas.clientWidth || 340;
+          const h = canvas.clientHeight || 340;
+          threeRenderer.setSize(w, h);
+          threeCamera.aspect = w / h;
+          threeCamera.updateProjectionMatrix();
+        }
+      });
+    });
   }
 }
 
@@ -1294,13 +1319,15 @@ function build3DScene(caseImageUrl) {
 
   threeInit = true;
   const canvas = document.getElementById('three-canvas');
+  const w = canvas.clientWidth  || canvas.offsetWidth  || 340;
+  const h = canvas.clientHeight || canvas.offsetHeight || 340;
 
   threeScene    = new THREE.Scene();
-  threeCamera   = new THREE.PerspectiveCamera(45, canvas.clientWidth / canvas.clientHeight, 0.1, 100);
+  threeCamera   = new THREE.PerspectiveCamera(45, w / h, 0.1, 100);
   threeCamera.position.set(0, 0, 3.5);
 
   threeRenderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-  threeRenderer.setSize(canvas.clientWidth, canvas.clientHeight);
+  threeRenderer.setSize(w, h);
   threeRenderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   threeRenderer.shadowMap.enabled = true;
 
