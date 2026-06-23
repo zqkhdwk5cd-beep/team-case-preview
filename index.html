@@ -2,1571 +2,1275 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Team Store – اختار جرابك</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Team Store – Case Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=SF+Pro+Display:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
-
-  :root {
-    --bg: #0a0a0f;
-    --surface: #13131a;
-    --card: #1a1a24;
-    --border: #2a2a3a;
-    --accent: #6c63ff;
-    --accent2: #a78bfa;
-    --gold: #f59e0b;
-    --text: #f0f0f8;
-    --muted: #7070a0;
-    --success: #10b981;
-    --radius: 20px;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: 'Cairo', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100dvh;
-    overflow-x: hidden;
-  }
-
-  /* ── AMBIENT BG ── */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background:
-      radial-gradient(ellipse 60% 40% at 20% 10%, rgba(108,99,255,.18) 0%, transparent 70%),
-      radial-gradient(ellipse 50% 30% at 80% 90%, rgba(167,139,250,.12) 0%, transparent 60%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* ── HEADER ── */
-  header {
-    position: relative;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px 24px;
-    border-bottom: 1px solid var(--border);
-    background: rgba(10,10,15,.8);
-    backdrop-filter: blur(20px);
-  }
-
-  .logo {
-    font-size: 20px;
-    font-weight: 900;
-    letter-spacing: -0.5px;
-    background: linear-gradient(135deg, #fff 0%, var(--accent2) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  .logo span { color: var(--gold); -webkit-text-fill-color: var(--gold); }
-
-  .step-badge {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 50px;
-    padding: 6px 14px;
-    font-size: 13px;
-    color: var(--muted);
-  }
-
-  .step-badge strong { color: var(--accent2); }
-
-  /* ── SCREENS ── */
-  .screen {
-    display: none;
-    position: relative;
-    z-index: 1;
-    padding: 28px 20px;
-    max-width: 480px;
-    margin: 0 auto;
-    min-height: calc(100dvh - 70px);
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 20px;
-  }
-
-  .screen.active { display: flex; }
-
-  /* ── HERO TITLE ── */
-  .hero-title {
-    text-align: center;
-    margin-bottom: 8px;
-  }
-
-  .hero-title h1 {
-    font-size: 28px;
-    font-weight: 900;
-    line-height: 1.2;
-  }
-
-  .hero-title p {
-    font-size: 15px;
-    color: var(--muted);
-    margin-top: 8px;
-    line-height: 1.6;
-  }
-
-  .pill {
-    display: inline-block;
-    background: rgba(108,99,255,.15);
-    border: 1px solid rgba(108,99,255,.3);
-    color: var(--accent2);
-    border-radius: 50px;
-    padding: 5px 16px;
-    font-size: 13px;
-    font-weight: 600;
-    margin-bottom: 12px;
-  }
-
-  /* ── MODEL GRID ── */
-  .model-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    width: 100%;
-  }
-
-  .model-btn {
-    background: var(--card);
-    border: 1.5px solid var(--border);
-    border-radius: 16px;
-    padding: 16px 12px;
-    cursor: pointer;
-    transition: all .2s;
-    text-align: center;
-    color: var(--text);
-  }
-
-  .model-btn:active { transform: scale(.96); }
-
-  .model-btn.selected {
-    border-color: var(--accent);
-    background: rgba(108,99,255,.12);
-    box-shadow: 0 0 0 1px var(--accent), 0 8px 32px rgba(108,99,255,.2);
-  }
-
-  .model-btn .model-name {
-    font-size: 14px;
-    font-weight: 700;
-    display: block;
-    margin-bottom: 3px;
-  }
-
-  .model-btn .model-sub {
-    font-size: 11px;
-    color: var(--muted);
-  }
-
-  .model-btn .model-icon {
-    font-size: 28px;
-    display: block;
-    margin-bottom: 8px;
-  }
-
-  /* ── PRIMARY BUTTON ── */
-  .btn-primary {
-    width: 100%;
-    padding: 16px;
-    background: linear-gradient(135deg, var(--accent) 0%, #8b5cf6 100%);
-    border: none;
-    border-radius: 14px;
-    color: #fff;
-    font-family: 'Cairo', sans-serif;
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all .2s;
-    box-shadow: 0 8px 24px rgba(108,99,255,.35);
-  }
-
-  .btn-primary:active { transform: scale(.97); }
-  .btn-primary:disabled { opacity: .4; cursor: not-allowed; transform: none; }
-
-  .btn-secondary {
-    width: 100%;
-    padding: 14px;
-    background: var(--card);
-    border: 1.5px solid var(--border);
-    border-radius: 14px;
-    color: var(--text);
-    font-family: 'Cairo', sans-serif;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all .2s;
-  }
-
-  .btn-secondary:active { transform: scale(.97); }
-
-  /* ── SCANNER ── */
-  .scanner-wrap {
-    width: 100%;
-    border-radius: 20px;
-    overflow: hidden;
-    position: relative;
-    background: #000;
-    aspect-ratio: 1;
-  }
-
-  #scanner-video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-
-  .scanner-overlay {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    pointer-events: none;
-  }
-
-  .scan-frame {
-    width: 65%;
-    aspect-ratio: 1;
-    position: relative;
-  }
-
-  .scan-frame::before, .scan-frame::after,
-  .scan-frame .corner2::before, .scan-frame .corner2::after {
-    content: '';
-    position: absolute;
-    width: 24px;
-    height: 24px;
-    border-color: var(--accent);
-    border-style: solid;
-  }
-
-  .scan-frame::before { top: 0; right: 0; border-width: 3px 3px 0 0; border-radius: 0 6px 0 0; }
-  .scan-frame::after  { bottom: 0; right: 0; border-width: 0 3px 3px 0; border-radius: 0 0 6px 0; }
-  .scan-frame .corner2::before { top: 0; left: 0; border-width: 3px 0 0 3px; border-radius: 6px 0 0 0; }
-  .scan-frame .corner2::after  { bottom: 0; left: 0; border-width: 0 0 3px 3px; border-radius: 0 0 0 6px; }
-
-  .scan-line {
-    position: absolute;
-    left: 10%; right: 10%;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--accent), transparent);
-    border-radius: 2px;
-    animation: scan 2s ease-in-out infinite;
-  }
-
-  @keyframes scan {
-    0%   { top: 10%; opacity: 0; }
-    10%  { opacity: 1; }
-    90%  { opacity: 1; }
-    100% { top: 90%; opacity: 0; }
-  }
-
-  .scanner-hint {
-    text-align: center;
-    font-size: 14px;
-    color: var(--muted);
-    line-height: 1.6;
-  }
-
-  /* OR divider */
-  .or-divider {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: 100%;
-    color: var(--muted);
-    font-size: 13px;
-  }
-  .or-divider::before, .or-divider::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
-
-  /* Manual input */
-  .manual-input {
-    width: 100%;
-    display: flex;
-    gap: 10px;
-  }
-
-  .manual-input input {
-    flex: 1;
-    background: var(--card);
-    border: 1.5px solid var(--border);
-    border-radius: 12px;
-    padding: 13px 16px;
-    color: var(--text);
-    font-family: 'Cairo', sans-serif;
-    font-size: 15px;
-    outline: none;
-    direction: ltr;
-  }
-
-  .manual-input input:focus { border-color: var(--accent); }
-
-  .manual-input button {
-    background: var(--accent);
-    border: none;
-    border-radius: 12px;
-    padding: 13px 20px;
-    color: #fff;
-    font-family: 'Cairo', sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: .2s;
-  }
-
-  .manual-input button:active { transform: scale(.95); }
-
-  /* ── RESULT SCREEN ── */
-  .product-card {
-    width: 100%;
-    background: var(--card);
-    border: 1.5px solid var(--border);
-    border-radius: 20px;
-    overflow: hidden;
-  }
-
-  .product-header {
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .product-title {
-    font-size: 16px;
-    font-weight: 700;
-  }
-
-  .product-price {
-    font-size: 18px;
-    font-weight: 900;
-    color: var(--gold);
-  }
-
-  .product-sku {
-    font-size: 12px;
-    color: var(--muted);
-    margin-top: 2px;
-  }
-
-  /* ── TABS ── */
-  .tabs {
-    display: flex;
-    gap: 0;
-    background: var(--surface);
-    padding: 4px;
-    border-radius: 12px;
-    width: 100%;
-  }
-
-  .tab-btn {
-    flex: 1;
-    padding: 10px;
-    border: none;
-    background: none;
-    border-radius: 10px;
-    color: var(--muted);
-    font-family: 'Cairo', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: .2s;
-  }
-
-  .tab-btn.active {
-    background: var(--card);
-    color: var(--text);
-    box-shadow: 0 2px 8px rgba(0,0,0,.3);
-  }
-
-  /* ── MOCKUP VIEW ── */
-  .mockup-view {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 340px;
-    position: relative;
-  }
-
-  .phone-mockup {
-    width: 200px;
-    position: relative;
-  }
-
-  .phone-frame {
-    width: 100%;
-    position: relative;
-  }
-
-  .phone-body {
-    width: 100%;
-    aspect-ratio: 9/19.5;
-    background: linear-gradient(145deg, #1c1c1e 0%, #2c2c2e 40%, #1c1c1e 100%);
-    border-radius: 42px;
-    border: 2px solid #3a3a3c;
-    position: relative;
-    box-shadow:
-      0 0 0 1px #000,
-      inset 0 1px 0 rgba(255,255,255,.08),
-      0 40px 80px rgba(0,0,0,.6),
-      0 20px 40px rgba(0,0,0,.4);
-    overflow: hidden;
-  }
-
-  .phone-screen {
-    position: absolute;
-    inset: 6px;
-    border-radius: 36px;
-    background: linear-gradient(160deg, #1a1a2e 0%, #16213e 100%);
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .phone-screen-content {
-    font-size: 11px;
-    color: rgba(255,255,255,.3);
-    text-align: center;
-  }
-
-  .phone-notch {
-    position: absolute;
-    top: 8px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80px;
-    height: 24px;
-    background: #000;
-    border-radius: 20px;
-    z-index: 10;
-  }
-
-  /* Side buttons */
-  .phone-btn-right {
-    position: absolute;
-    right: -3px;
-    top: 30%;
-    width: 3px;
-    height: 60px;
-    background: #3a3a3c;
-    border-radius: 0 2px 2px 0;
-  }
-
-  .phone-btn-left1 {
-    position: absolute;
-    left: -3px;
-    top: 22%;
-    width: 3px;
-    height: 30px;
-    background: #3a3a3c;
-    border-radius: 2px 0 0 2px;
-  }
-
-  .phone-btn-left2 {
-    position: absolute;
-    left: -3px;
-    top: 36%;
-    width: 3px;
-    height: 50px;
-    background: #3a3a3c;
-    border-radius: 2px 0 0 2px;
-  }
-
-  .case-overlay {
-    position: absolute;
-    inset: -4px;
-    border-radius: 46px;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    z-index: 5;
-    opacity: 0;
-    transition: opacity .5s;
-  }
-
-  .case-overlay.loaded { opacity: 1; }
-
-  /* Camera module (Pro) */
-  .camera-module {
-    position: absolute;
-    top: 14%;
-    right: 8%;
-    width: 32%;
-    aspect-ratio: 1;
-    background: linear-gradient(145deg, #0a0a0a, #1a1a1a);
-    border-radius: 28%;
-    border: 1.5px solid #2a2a2a;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3px;
-    padding: 4px;
-    box-shadow: 0 4px 12px rgba(0,0,0,.5);
-  }
-
-  .camera-lens {
-    background: radial-gradient(circle at 30% 30%, #1a1a3e, #000);
-    border-radius: 50%;
-    border: 1px solid #333;
-  }
-
-  /* ── 3D CANVAS ── */
-  #three-canvas {
-    width: 100%;
-    height: 340px;
-    border-radius: 16px;
-    display: block;
-  }
-
-  .tab-content { display: none; width: 100%; }
-  .tab-content.active { display: block; }
-
-  /* ── INFO SECTION ── */
-  .info-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    width: 100%;
-  }
-
-  .info-icon {
-    width: 40px;
-    height: 40px;
-    background: rgba(108,99,255,.15);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    flex-shrink: 0;
-  }
-
-  .info-label { font-size: 12px; color: var(--muted); }
-  .info-val   { font-size: 15px; font-weight: 700; }
-
-  /* ── LOADING ── */
-  .loading-wrap {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    padding: 40px;
-  }
-
-  .spinner {
-    width: 48px;
-    height: 48px;
-    border: 3px solid var(--border);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin .8s linear infinite;
-  }
-
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* ── IN-APP BROWSER WARNING ── */
-  #inapp-screen {
-    display: none;
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    background: var(--bg);
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 32px 24px;
-    text-align: center;
-    gap: 20px;
-  }
-
-  #inapp-screen.show { display: flex; }
-
-  .inapp-icon {
-    font-size: 64px;
-    line-height: 1;
-  }
-
-  .inapp-title {
-    font-size: 24px;
-    font-weight: 900;
-    line-height: 1.3;
-  }
-
-  .inapp-desc {
-    font-size: 15px;
-    color: var(--muted);
-    line-height: 1.7;
-    max-width: 320px;
-  }
-
-  .inapp-steps {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 20px;
-    width: 100%;
-    max-width: 340px;
-    text-align: right;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
-
-  .inapp-step {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-  }
-
-  .inapp-step-num {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background: var(--accent);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    font-weight: 700;
-    flex-shrink: 0;
-  }
-
-  .inapp-step-text {
-    font-size: 14px;
-    line-height: 1.5;
-    padding-top: 4px;
-  }
-
-  .inapp-step-text strong {
-    display: block;
-    color: var(--text);
-    margin-bottom: 2px;
-  }
-
-  .inapp-step-text span {
-    color: var(--muted);
-    font-size: 13px;
-  }
-
-  .copy-url-btn {
-    width: 100%;
-    max-width: 340px;
-    padding: 15px;
-    background: var(--card);
-    border: 1.5px solid var(--accent);
-    border-radius: 14px;
-    color: var(--accent2);
-    font-family: 'Cairo', sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: .2s;
-  }
-
-  .copy-url-btn:active { opacity: .7; }
-
-  .safari-badge {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: rgba(108,99,255,.1);
-    border: 1px solid rgba(108,99,255,.2);
-    border-radius: 12px;
-    padding: 12px 16px;
-    font-size: 13px;
-    color: var(--muted);
-    max-width: 340px;
-    width: 100%;
-  }
-
-  .safari-badge .safari-icon { font-size: 24px; }
-
-  /* ── TOAST ── */
-  .toast {
-    position: fixed;
-    bottom: 32px;
-    left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    background: var(--success);
-    color: #fff;
-    padding: 12px 24px;
-    border-radius: 50px;
-    font-weight: 700;
-    font-size: 14px;
-    z-index: 100;
-    opacity: 0;
-    transition: all .3s;
-    white-space: nowrap;
-    box-shadow: 0 8px 24px rgba(16,185,129,.4);
-  }
-
-  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-  .toast.error { background: #ef4444; box-shadow: 0 8px 24px rgba(239,68,68,.4); }
-
-  /* ── BACK BTN ── */
-  .back-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: none;
-    border: none;
-    color: var(--muted);
-    font-family: 'Cairo', sans-serif;
-    font-size: 14px;
-    cursor: pointer;
-    padding: 0;
-    align-self: flex-start;
-    transition: color .2s;
-  }
-
-  .back-btn:hover { color: var(--text); }
-
-  /* ── ADD TO CART ── */
-  .cart-btn {
-    width: 100%;
-    padding: 18px;
-    background: linear-gradient(135deg, var(--gold) 0%, #f97316 100%);
-    border: none;
-    border-radius: 14px;
-    color: #000;
-    font-family: 'Cairo', sans-serif;
-    font-size: 17px;
-    font-weight: 900;
-    cursor: pointer;
-    transition: all .2s;
-    box-shadow: 0 8px 24px rgba(245,158,11,.35);
-    letter-spacing: .5px;
-  }
-
-  .cart-btn:active { transform: scale(.97); }
-
-  /* ── EMPTY STATE ── */
-  .empty-state {
-    text-align: center;
-    padding: 40px 20px;
-    color: var(--muted);
-  }
-
-  .empty-state .empty-icon { font-size: 52px; margin-bottom: 16px; }
-  .empty-state h3 { color: var(--text); font-size: 18px; margin-bottom: 8px; }
-  .empty-state p { font-size: 14px; line-height: 1.6; }
-
-  /* Responsive */
-  @media (max-width: 360px) {
-    .model-grid { grid-template-columns: 1fr 1fr; }
-    header { padding: 16px; }
-  }
+/* ═══════════════════════════════════════════
+   TOKENS
+═══════════════════════════════════════════ */
+:root {
+  --ink-0: #ffffff;
+  --ink-1: #e8e8f0;
+  --ink-2: #a0a0c0;
+  --ink-3: #5a5a7a;
+  --bg-0:  #07070e;
+  --bg-1:  #0f0f1a;
+  --bg-2:  #161625;
+  --bg-3:  #1e1e30;
+  --accent: #7c6fff;
+  --accent-dim: rgba(124,111,255,.12);
+  --accent-glow: rgba(124,111,255,.35);
+  --gold: #f0a500;
+  --gold-dim: rgba(240,165,0,.1);
+  --green: #00d68f;
+  --red: #ff4d6a;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: 'Cairo', sans-serif;
+  background: var(--bg-0);
+  color: var(--ink-1);
+  overscroll-behavior: none;
+}
+
+/* ═══════════════════════════════════════════
+   AMBIENT
+═══════════════════════════════════════════ */
+.ambient {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 50% at 15% 0%, rgba(124,111,255,.14) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 35% at 85% 100%, rgba(124,111,255,.08) 0%, transparent 60%);
+}
+
+/* ═══════════════════════════════════════════
+   LAYOUT
+═══════════════════════════════════════════ */
+.app {
+  position: relative; z-index: 1;
+  height: 100dvh;
+  display: flex; flex-direction: column;
+  max-width: 430px; margin: 0 auto;
+}
+
+/* ── Header ── */
+.header {
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px 14px;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+}
+
+.logo {
+  font-size: 17px; font-weight: 900; letter-spacing: .5px;
+  color: var(--ink-0);
+}
+.logo em { font-style:normal; color: var(--accent); }
+
+.step-pill {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--bg-2); border: 1px solid rgba(255,255,255,.06);
+  border-radius: 50px; padding: 5px 12px;
+  font-size: 12px; color: var(--ink-3);
+}
+.step-pill b { color: var(--accent); }
+
+/* ── Screens ── */
+.screens { flex: 1; overflow: hidden; position: relative; }
+
+.screen {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  padding: 0 16px 16px;
+  overflow-y: auto; overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  opacity: 0; pointer-events: none;
+  transform: translateX(30px);
+  transition: opacity .28s cubic-bezier(.4,0,.2,1), transform .28s cubic-bezier(.4,0,.2,1);
+}
+
+.screen.active {
+  opacity: 1; pointer-events: auto; transform: translateX(0);
+}
+
+.screen.exit {
+  opacity: 0; transform: translateX(-30px);
+}
+
+/* ═══════════════════════════════════════════
+   SCREEN 1 — MODEL SELECT
+═══════════════════════════════════════════ */
+.s1-hero {
+  padding: 24px 0 20px;
+  text-align: center;
+}
+
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--accent-dim); border: 1px solid rgba(124,111,255,.2);
+  border-radius: 50px; padding: 4px 12px;
+  font-size: 12px; font-weight: 600; color: var(--accent);
+  margin-bottom: 12px;
+}
+
+.s1-hero h1 {
+  font-size: 26px; font-weight: 900;
+  color: var(--ink-0); line-height: 1.2;
+  margin-bottom: 6px;
+}
+
+.s1-hero p { font-size: 14px; color: var(--ink-3); line-height: 1.6; }
+
+/* Model series tabs */
+.series-tabs {
+  display: flex; gap: 6px;
+  overflow-x: auto; padding-bottom: 2px;
+  margin-bottom: 12px;
+  scrollbar-width: none;
+}
+.series-tabs::-webkit-scrollbar { display:none; }
+
+.series-tab {
+  flex-shrink: 0;
+  background: var(--bg-2); border: 1px solid rgba(255,255,255,.06);
+  border-radius: 50px; padding: 6px 14px;
+  font-family: 'Cairo',sans-serif; font-size: 13px; font-weight: 600;
+  color: var(--ink-3); cursor: pointer; transition: .18s;
+  white-space: nowrap;
+}
+.series-tab.active {
+  background: var(--accent-dim); border-color: rgba(124,111,255,.3);
+  color: var(--accent);
+}
+
+/* Model grid */
+.model-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 8px; margin-bottom: 16px;
+}
+
+.model-card {
+  background: var(--bg-2);
+  border: 1.5px solid rgba(255,255,255,.05);
+  border-radius: var(--radius-md);
+  padding: 14px 12px 12px;
+  cursor: pointer; transition: .2s;
+  text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+.model-card:active { transform: scale(.95); }
+.model-card.selected {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+  box-shadow: 0 0 0 1px rgba(124,111,255,.3), 0 6px 24px rgba(124,111,255,.15);
+}
+
+/* Mini phone SVG in card */
+.model-thumb { width: 32px; height: 52px; }
+
+.model-card-name {
+  font-size: 13px; font-weight: 700; color: var(--ink-1);
+  line-height: 1.2;
+}
+.model-card-sub {
+  font-size: 11px; color: var(--ink-3); margin-top: -4px;
+}
+
+/* CTA */
+.cta-btn {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(135deg, var(--accent) 0%, #a78bfa 100%);
+  border: none; border-radius: var(--radius-md);
+  font-family: 'Cairo',sans-serif; font-size: 16px; font-weight: 700;
+  color: #fff; cursor: pointer;
+  box-shadow: 0 8px 28px var(--accent-glow);
+  transition: .2s; flex-shrink: 0;
+}
+.cta-btn:active { transform: scale(.97); }
+.cta-btn:disabled { opacity:.35; cursor:not-allowed; transform:none; }
+
+/* ═══════════════════════════════════════════
+   SCREEN 2 — SCANNER
+═══════════════════════════════════════════ */
+.back-btn {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: none; border: none;
+  font-family:'Cairo',sans-serif; font-size:14px; color:var(--ink-3);
+  cursor:pointer; padding: 16px 0 8px;
+  transition: color .15s;
+}
+.back-btn:active { color: var(--ink-1); }
+
+.scanner-box {
+  width: 100%; aspect-ratio: 1;
+  border-radius: var(--radius-lg); overflow: hidden;
+  position: relative; background: #000;
+  flex-shrink: 0;
+}
+
+#scanner-video {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+
+.scan-ui {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none;
+}
+
+.scan-corners {
+  width: 60%; aspect-ratio: 1; position: relative;
+}
+
+.scan-corners::before, .scan-corners::after,
+.scan-corners span::before, .scan-corners span::after {
+  content: ''; position: absolute;
+  width: 22px; height: 22px;
+  border-style: solid; border-color: var(--accent);
+}
+.scan-corners::before { top:0; right:0; border-width:2.5px 2.5px 0 0; border-radius: 0 7px 0 0; }
+.scan-corners::after  { bottom:0; right:0; border-width:0 2.5px 2.5px 0; border-radius: 0 0 7px 0; }
+.scan-corners span::before { top:0; left:0; border-width:2.5px 0 0 2.5px; border-radius: 7px 0 0 0; }
+.scan-corners span::after  { bottom:0; left:0; border-width:0 0 2.5px 2.5px; border-radius: 0 0 0 7px; }
+
+.scan-beam {
+  position: absolute; left: 8%; right: 8%;
+  height: 1.5px;
+  background: linear-gradient(90deg,transparent,var(--accent),transparent);
+  animation: beam 1.8s ease-in-out infinite;
+}
+@keyframes beam {
+  0%   { top:8%; opacity:0; }
+  8%   { opacity:1; }
+  92%  { opacity:1; }
+  100% { top:92%; opacity:0; }
+}
+
+.scanner-hint {
+  text-align:center; font-size:13px; color:var(--ink-3);
+  padding: 12px 0 4px; line-height:1.5; flex-shrink:0;
+}
+
+.divider {
+  display:flex; align-items:center; gap:10px;
+  color:var(--ink-3); font-size:12px;
+  padding: 4px 0; flex-shrink:0;
+}
+.divider::before,.divider::after {
+  content:''; flex:1; height:1px; background:rgba(255,255,255,.06);
+}
+
+.manual-row {
+  display:flex; gap:8px; flex-shrink:0;
+}
+.manual-row input {
+  flex:1; background:var(--bg-2);
+  border:1.5px solid rgba(255,255,255,.07);
+  border-radius:var(--radius-sm); padding:12px 14px;
+  font-family:'Cairo',sans-serif; font-size:15px;
+  color:var(--ink-0); outline:none; direction:ltr;
+  transition: border-color .2s;
+}
+.manual-row input:focus { border-color: var(--accent); }
+.manual-row input::placeholder { color: var(--ink-3); }
+
+.manual-row button {
+  background:var(--accent); border:none;
+  border-radius:var(--radius-sm); padding:12px 18px;
+  font-family:'Cairo',sans-serif; font-size:15px; font-weight:700;
+  color:#fff; cursor:pointer; transition:.18s; white-space:nowrap;
+}
+.manual-row button:active { opacity:.8; }
+
+/* ═══════════════════════════════════════════
+   SCREEN 3 — RESULT
+═══════════════════════════════════════════ */
+.result-header {
+  padding: 8px 0 16px;
+  display:flex; justify-content:space-between; align-items:flex-start;
+}
+.result-name { font-size:20px; font-weight:900; color:var(--ink-0); }
+.result-sku  { font-size:12px; color:var(--ink-3); margin-top:2px; }
+.result-price {
+  font-size:22px; font-weight:900; color:var(--gold);
+  white-space:nowrap;
+}
+
+/* ── View tabs ── */
+.view-tabs {
+  display:flex; gap:0;
+  background:var(--bg-2); border:1px solid rgba(255,255,255,.05);
+  border-radius:var(--radius-sm); padding:3px;
+  margin-bottom:12px; flex-shrink:0;
+}
+.view-tab {
+  flex:1; padding:9px 8px;
+  background:none; border:none; border-radius:7px;
+  font-family:'Cairo',sans-serif; font-size:13px; font-weight:600;
+  color:var(--ink-3); cursor:pointer; transition:.18s;
+}
+.view-tab.active {
+  background:var(--bg-0);
+  color:var(--ink-1);
+  box-shadow:0 1px 6px rgba(0,0,0,.4);
+}
+
+.tab-panel { display:none; }
+.tab-panel.active { display:block; }
+
+/* ── MOCKUP ── */
+.mockup-stage {
+  display:flex; align-items:center; justify-content:center;
+  min-height: 340px; padding: 10px 0 16px;
+  position: relative;
+}
+
+/* Phone SVG wrapper */
+.phone-svg-wrap {
+  position: relative;
+  width: 180px;
+  filter: drop-shadow(0 30px 60px rgba(0,0,0,.7)) drop-shadow(0 8px 20px rgba(124,111,255,.15));
+}
+
+.phone-svg-wrap svg { width:100%; display:block; }
+
+/* Case overlay on top of phone SVG */
+.case-img-overlay {
+  position:absolute;
+  inset: 0;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: 22%;
+  opacity: 0;
+  transition: opacity .5s cubic-bezier(.4,0,.2,1);
+  mix-blend-mode: multiply;
+}
+.case-img-overlay.show { opacity: 1; }
+
+/* ── 3D ── */
+#canvas3d {
+  width:100%; height:360px;
+  border-radius:var(--radius-md);
+  display:block; cursor:grab;
+}
+#canvas3d:active { cursor:grabbing; }
+
+.drag-hint {
+  text-align:center; font-size:12px; color:var(--ink-3);
+  margin-top:6px; margin-bottom:8px;
+}
+
+/* ── Info chips ── */
+.info-chips {
+  display:flex; flex-direction:column; gap:6px;
+  margin-bottom:12px;
+}
+
+.chip {
+  display:flex; align-items:center; gap:12px;
+  background:var(--bg-2); border:1px solid rgba(255,255,255,.05);
+  border-radius:var(--radius-sm); padding:11px 14px;
+}
+.chip-icon {
+  width:34px; height:34px; border-radius:8px;
+  background:var(--bg-3);
+  display:flex; align-items:center; justify-content:center;
+  font-size:17px; flex-shrink:0;
+}
+.chip-label { font-size:11px; color:var(--ink-3); }
+.chip-val   { font-size:14px; font-weight:700; color:var(--ink-1); }
+
+/* ── Cart btn ── */
+.cart-btn {
+  width:100%; padding:16px;
+  background:linear-gradient(135deg,var(--gold) 0%,#f97316 100%);
+  border:none; border-radius:var(--radius-md);
+  font-family:'Cairo',sans-serif; font-size:17px; font-weight:900;
+  color:#000; cursor:pointer; letter-spacing:.3px;
+  box-shadow:0 8px 28px rgba(240,165,0,.3);
+  transition:.2s; flex-shrink:0;
+}
+.cart-btn:active { transform:scale(.97); }
+
+/* ═══════════════════════════════════════════
+   IN-APP BROWSER WALL
+═══════════════════════════════════════════ */
+#inapp-wall {
+  display:none; position:fixed; inset:0; z-index:9999;
+  background:var(--bg-0);
+  flex-direction:column; align-items:center; justify-content:center;
+  padding:32px 24px; gap:18px; text-align:center;
+}
+#inapp-wall.show { display:flex; }
+
+.wall-icon { font-size:56px; }
+.wall-title { font-size:22px; font-weight:900; color:var(--ink-0); line-height:1.25; }
+.wall-sub   { font-size:14px; color:var(--ink-3); line-height:1.65; max-width:300px; }
+
+.wall-steps {
+  background:var(--bg-2); border:1px solid rgba(255,255,255,.05);
+  border-radius:var(--radius-lg); padding:18px 16px;
+  width:100%; max-width:340px;
+  display:flex; flex-direction:column; gap:12px; text-align:right;
+}
+.wall-step { display:flex; align-items:flex-start; gap:10px; }
+.wall-step-n {
+  width:26px; height:26px; border-radius:50%;
+  background:var(--accent); font-size:12px; font-weight:700;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; color:#fff;
+}
+.wall-step-text strong { display:block; font-size:13px; color:var(--ink-1); margin-bottom:1px; }
+.wall-step-text span   { font-size:12px; color:var(--ink-3); }
+
+.copy-btn {
+  width:100%; max-width:340px; padding:14px;
+  background:var(--bg-2); border:1.5px solid rgba(124,111,255,.3);
+  border-radius:var(--radius-md);
+  font-family:'Cairo',sans-serif; font-size:14px; font-weight:700;
+  color:var(--accent); cursor:pointer; transition:.18s;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+}
+
+/* ═══════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════ */
+.toast {
+  position:fixed; bottom:28px; left:50%;
+  transform:translateX(-50%) translateY(12px);
+  background:var(--green); color:#003d23;
+  padding:10px 22px; border-radius:50px;
+  font-size:14px; font-weight:700;
+  opacity:0; transition:.25s; z-index:1000;
+  white-space:nowrap; pointer-events:none;
+}
+.toast.show  { opacity:1; transform:translateX(-50%) translateY(0); }
+.toast.error { background:var(--red); color:#fff; }
+
+/* ═══════════════════════════════════════════
+   LOADING SPINNER
+═══════════════════════════════════════════ */
+.spinner-wrap {
+  display:flex; flex-direction:column; align-items:center;
+  justify-content:center; gap:14px; padding:60px 0;
+}
+.spinner {
+  width:40px; height:40px; border:3px solid var(--bg-3);
+  border-top-color:var(--accent); border-radius:50%;
+  animation:spin .7s linear infinite;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
 </style>
 </head>
 <body>
 
-<header>
-  <div class="logo">TEAM<span>STORE</span></div>
-  <div class="step-badge" id="step-badge">خطوة <strong>1</strong> من 3</div>
-</header>
+<div class="ambient"></div>
 
-<!-- ══════════════════════════════════
-     SCREEN 1: اختار الموديل
-══════════════════════════════════ -->
-<div class="screen active" id="screen-model">
-  <div class="hero-title">
-    <div class="pill">🎯 اختار موديلك</div>
-    <h1>إيه موديل آيفونك؟</h1>
-    <p>اختار موديلك عشان نعرض الجراب عليه بشكل حقيقي</p>
-  </div>
+<div class="app">
 
-  <div class="model-grid" id="model-grid">
-    <!-- Generated by JS -->
-  </div>
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">TEAM<em>STORE</em></div>
+    <div class="step-pill">خطوة <b id="step-num">1</b> من 3</div>
+  </header>
 
-  <button class="btn-primary" id="btn-go-scan" disabled onclick="goToScan()">
-    استمر لمسح الجراب ←
-  </button>
-</div>
+  <div class="screens">
 
-<!-- ══════════════════════════════════
-     SCREEN 2: سكان الباركود
-══════════════════════════════════ -->
-<div class="screen" id="screen-scan">
-  <button class="back-btn" onclick="goTo('model')">← رجوع</button>
-
-  <div class="hero-title">
-    <div class="pill">📷 امسح الجراب</div>
-    <h1>سكان باركود الجراب</h1>
-    <p>وجّه الكاميرا على الباركود الموجود على المنتج</p>
-  </div>
-
-  <div class="scanner-wrap">
-    <video id="scanner-video" autoplay playsinline muted></video>
-    <div class="scanner-overlay">
-      <div class="scan-frame">
-        <div class="corner2"></div>
-        <div class="scan-line"></div>
+    <!-- ══ SCREEN 1: MODEL ══ -->
+    <div class="screen active" id="s-model">
+      <div class="s1-hero">
+        <div class="eyebrow">🎯 الخطوة الأولى</div>
+        <h1>إيه موديل آيفونك؟</h1>
+        <p>اختار الموديل عشان نعرض الجراب عليه بشكل حقيقي</p>
       </div>
-    </div>
-  </div>
 
-  <div class="scanner-hint">وجّه الكاميرا على الباركود — بيتعرف تلقائي</div>
+      <div class="series-tabs" id="series-tabs"></div>
+      <div class="model-grid" id="model-grid"></div>
 
-  <div class="or-divider">أو ادخل الكود يدوياً</div>
-
-  <div class="manual-input">
-    <input type="text" id="manual-code" placeholder="CASE-11-BLK" />
-    <button onclick="processCode(document.getElementById('manual-code').value)">بحث</button>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════
-     SCREEN 3: النتيجة
-══════════════════════════════════ -->
-<div class="screen" id="screen-result">
-  <button class="back-btn" onclick="goTo('scan')">← امسح جراب تاني</button>
-
-  <!-- Product Card -->
-  <div class="product-card" id="product-card">
-    <div class="product-header">
-      <div>
-        <div class="product-title" id="res-title">—</div>
-        <div class="product-sku" id="res-sku">—</div>
-      </div>
-      <div class="product-price" id="res-price">—</div>
+      <div style="flex:1"></div>
+      <button class="cta-btn" id="btn-continue" disabled onclick="goTo('s-scan')">
+        استمر لمسح الجراب ←
+      </button>
     </div>
 
-    <!-- Tabs -->
-    <div style="padding: 16px 16px 0">
-      <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('mockup', this)">📸 صورة واقعية</button>
-        <button class="tab-btn" onclick="switchTab('3d', this)">🌀 عرض 3D</button>
-      </div>
-    </div>
+    <!-- ══ SCREEN 2: SCAN ══ -->
+    <div class="screen" id="s-scan">
+      <button class="back-btn" onclick="goTo('s-model')">← رجوع</button>
 
-    <!-- Mockup Tab -->
-    <div class="tab-content active" id="tab-mockup" style="padding: 20px 16px;">
-      <div class="mockup-view">
-        <div class="phone-mockup" id="phone-mockup">
-          <div class="phone-frame">
-            <div class="phone-body">
-              <!-- Case overlay -->
-              <div class="case-overlay" id="case-overlay"></div>
-              <!-- Screen -->
-              <div class="phone-screen">
-                <div class="phone-screen-content">
-                  <div style="font-size:24px;margin-bottom:4px;">📱</div>
-                  <div>آيفون</div>
-                </div>
-              </div>
-              <!-- Dynamic island / notch -->
-              <div class="phone-notch" id="phone-notch"></div>
-              <!-- Camera -->
-              <div class="camera-module" id="camera-module">
-                <div class="camera-lens"></div>
-                <div class="camera-lens"></div>
-                <div class="camera-lens"></div>
-                <div class="camera-lens"></div>
-              </div>
-              <!-- Buttons -->
-              <div class="phone-btn-right"></div>
-              <div class="phone-btn-left1"></div>
-              <div class="phone-btn-left2"></div>
-            </div>
+      <div style="text-align:center;padding:0 0 14px">
+        <div class="eyebrow">📷 الخطوة الثانية</div>
+        <div style="font-size:20px;font-weight:900;color:var(--ink-0);margin-top:6px">سكان باركود الجراب</div>
+        <div style="font-size:13px;color:var(--ink-3);margin-top:4px">وجّه الكاميرا على الباركود الموجود على المنتج</div>
+      </div>
+
+      <div class="scanner-box">
+        <video id="scanner-video" autoplay playsinline muted></video>
+        <div class="scan-ui">
+          <div class="scan-corners">
+            <span></span>
+            <div class="scan-beam"></div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- 3D Tab -->
-    <div class="tab-content" id="tab-3d" style="padding: 0 16px 16px;">
-      <canvas id="three-canvas"></canvas>
-      <div style="text-align:center;font-size:12px;color:var(--muted);margin-top:8px;">
-        اسحب لتدوير الموبايل 🔄
+      <p class="scanner-hint">بيتعرف تلقائياً — مش محتاج تضغط حاجة</p>
+
+      <div class="divider">أو ادخل الكود يدوياً</div>
+
+      <div class="manual-row">
+        <input type="text" id="manual-code" placeholder="مثال: 1" />
+        <button onclick="handleManual()">بحث</button>
       </div>
     </div>
-  </div>
 
-  <!-- Info Rows -->
-  <div class="info-row">
-    <div class="info-icon">📱</div>
-    <div>
-      <div class="info-label">متوافق مع</div>
-      <div class="info-val" id="res-compat">—</div>
+    <!-- ══ SCREEN 3: RESULT ══ -->
+    <div class="screen" id="s-result">
+      <button class="back-btn" onclick="goTo('s-scan')">← امسح جراب تاني</button>
+
+      <div class="result-header">
+        <div>
+          <div class="result-name" id="r-name">—</div>
+          <div class="result-sku" id="r-sku">—</div>
+        </div>
+        <div class="result-price" id="r-price">—</div>
+      </div>
+
+      <div class="view-tabs">
+        <button class="view-tab active" onclick="switchTab('mockup',this)">📸 صورة واقعية</button>
+        <button class="view-tab" onclick="switchTab('3d',this)">🌀 عرض 3D</button>
+      </div>
+
+      <!-- MOCKUP TAB -->
+      <div class="tab-panel active" id="tab-mockup">
+        <div class="mockup-stage">
+          <div class="phone-svg-wrap" id="phone-svg-wrap">
+            <!-- SVG injected by JS -->
+            <div class="case-img-overlay" id="case-overlay"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3D TAB -->
+      <div class="tab-panel" id="tab-3d">
+        <canvas id="canvas3d"></canvas>
+        <p class="drag-hint">اسحب لتدوير الموبايل 🔄</p>
+      </div>
+
+      <!-- Info -->
+      <div class="info-chips">
+        <div class="chip">
+          <div class="chip-icon">📱</div>
+          <div><div class="chip-label">متوافق مع</div><div class="chip-val" id="r-compat">—</div></div>
+        </div>
+        <div class="chip">
+          <div class="chip-icon">🎨</div>
+          <div><div class="chip-label">اللون</div><div class="chip-val" id="r-color">—</div></div>
+        </div>
+        <div class="chip">
+          <div class="chip-icon">✅</div>
+          <div><div class="chip-label">الحالة</div><div class="chip-val" style="color:var(--green)">متوفر في المتجر</div></div>
+        </div>
+      </div>
+
+      <button class="cart-btn">🛒 أضف للسلة</button>
     </div>
-  </div>
 
-  <div class="info-row">
-    <div class="info-icon">🎨</div>
-    <div>
-      <div class="info-label">اللون</div>
-      <div class="info-val" id="res-color">—</div>
-    </div>
-  </div>
+  </div><!-- /screens -->
+</div><!-- /app -->
 
-  <div class="info-row">
-    <div class="info-icon">✅</div>
-    <div>
-      <div class="info-label">الحالة</div>
-      <div class="info-val" style="color:var(--success)">متوفر في المتجر</div>
-    </div>
+<!-- In-app wall -->
+<div id="inapp-wall">
+  <div class="wall-icon">🔒</div>
+  <div class="wall-title">افتح في Safari<br>عشان الكاميرا تشتغل</div>
+  <div class="wall-sub">الكاميرا مش بتشتغل جوه تطبيقات زي Instagram أو Facebook — محتاج Safari</div>
+  <div class="wall-steps">
+    <div style="font-size:13px;font-weight:700;color:var(--ink-1)">إزاي تفتحها في Safari؟</div>
+    <div class="wall-step"><div class="wall-step-n">1</div><div class="wall-step-text"><strong>افتح الـ menu</strong><span>اضغط ··· أو سهم المشاركة ↗</span></div></div>
+    <div class="wall-step"><div class="wall-step-n">2</div><div class="wall-step-text"><strong>اختار "Open in Safari"</strong><span>أو "افتح في Safari"</span></div></div>
+    <div class="wall-step"><div class="wall-step-n">3</div><div class="wall-step-text"><strong>اسمح بالكاميرا</strong><span>اضغط Allow لما يسألك</span></div></div>
   </div>
-
-  <button class="cart-btn" onclick="addToCart()">🛒 أضف للسلة</button>
+  <button class="copy-btn" onclick="copyUrl()">📋 انسخ الرابط</button>
 </div>
 
-<!-- TOAST -->
+<!-- Toast -->
 <div class="toast" id="toast"></div>
 
-<!-- IN-APP BROWSER WARNING -->
-<div id="inapp-screen">
-  <div class="inapp-icon">🔒</div>
-  <div class="inapp-title">افتح في Safari<br>عشان الكاميرا تشتغل</div>
-  <div class="inapp-desc">
-    الصفحة دي محتاجة إذن الكاميرا، وده مش بيشتغل جوه تطبيقات زي Instagram أو Facebook
-  </div>
-
-  <div class="inapp-steps">
-    <div style="font-size:14px;font-weight:700;margin-bottom:4px;">كيف تفتحها في Safari؟</div>
-    <div class="inapp-step">
-      <div class="inapp-step-num">1</div>
-      <div class="inapp-step-text">
-        <strong>افتح الـ menu</strong>
-        <span>اضغط على ··· أو السهم ↗ في الأعلى</span>
-      </div>
-    </div>
-    <div class="inapp-step">
-      <div class="inapp-step-num">2</div>
-      <div class="inapp-step-text">
-        <strong>اختار "Open in Safari"</strong>
-        <span>أو "افتح في Safari"</span>
-      </div>
-    </div>
-    <div class="inapp-step">
-      <div class="inapp-step-num">3</div>
-      <div class="inapp-step-text">
-        <strong>اسمح بالكاميرا</strong>
-        <span>اضغط "Allow" لما يسألك</span>
-      </div>
-    </div>
-  </div>
-
-  <button class="copy-url-btn" onclick="copyUrl()">
-    <span>📋</span> انسخ الرابط
-  </button>
-
-  <div class="safari-badge">
-    <span class="safari-icon">🧭</span>
-    <span>أو افتح الرابط ده في Safari:<br><strong style="color:var(--text);" id="url-display">—</strong></span>
-  </div>
-</div>
-
-
-
-<!-- Three.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://raw.githubusercontent.com/mrdoob/three.js/r128/examples/js/loaders/GLTFLoader.js"></script>
-
-<!-- ZXing Barcode Scanner -->
 <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.18.6/umd/index.min.js"></script>
 
 <script>
-// ══════════════════════════════════════════════
-// CONFIG — استبدل بداتا حقيقية من Shopify لاحقاً
-// ══════════════════════════════════════════════
-
-const SHOPIFY_DOMAIN = 'teamstore.co';
-const SHOPIFY_TOKEN  = 'YOUR_STOREFRONT_ACCESS_TOKEN'; // ← ضيفه لاحقاً
-
-const IPHONE_MODELS = [
-  { id: 'iphone-11',        name: 'iPhone 11',        sub: '6.1"',   icon: '📱', lenses: 2 },
-  { id: 'iphone-12',        name: 'iPhone 12',        sub: '6.1"',   icon: '📱', lenses: 2 },
-  { id: 'iphone-13',        name: 'iPhone 13',        sub: '6.1"',   icon: '📱', lenses: 2 },
-  { id: 'iphone-14',        name: 'iPhone 14',        sub: '6.1"',   icon: '📱', lenses: 2 },
-  { id: 'iphone-15',        name: 'iPhone 15',        sub: '6.1"',   icon: '📱', lenses: 2 },
-  { id: 'iphone-16',        name: 'iPhone 16',        sub: '6.1"',   icon: '📱', lenses: 2 },
-  { id: 'iphone-14-pro',    name: 'iPhone 14 Pro',    sub: '6.1" Pro', icon: '📱', lenses: 3 },
-  { id: 'iphone-15-pro',    name: 'iPhone 15 Pro',    sub: '6.1" Pro', icon: '📱', lenses: 3 },
-  { id: 'iphone-16-pro',    name: 'iPhone 16 Pro',    sub: '6.1" Pro', icon: '📱', lenses: 3 },
-  { id: 'iphone-15-pro-max',name: 'iPhone 15 Pro Max',sub: '6.7" Pro', icon: '📱', lenses: 3 },
-  { id: 'iphone-16-pro-max',name: 'iPhone 16 Pro Max',sub: '6.7" Pro', icon: '📱', lenses: 3 },
-  { id: 'iphone-14-plus',   name: 'iPhone 14 Plus',   sub: '6.7"',   icon: '📱', lenses: 2 },
+/* ═══════════════════════════════════════════
+   DATA
+═══════════════════════════════════════════ */
+const SERIES = [
+  { id:'std',  label:'Standard' },
+  { id:'pro',  label:'Pro' },
+  { id:'plus', label:'Plus / Max' },
 ];
 
-// ── DEMO PRODUCTS (سيُستبدل بـ Shopify API) ──
-const DEMO_PRODUCTS = {
+const MODELS = [
+  // Standard
+  { id:'11',   series:'std',  name:'iPhone 11',  sub:'6.1" LCD', notch:'notch', lenses:2, year:2019 },
+  { id:'12',   series:'std',  name:'iPhone 12',  sub:'6.1" OLED', notch:'notch', lenses:2, year:2020 },
+  { id:'13',   series:'std',  name:'iPhone 13',  sub:'6.1" OLED', notch:'small-notch', lenses:2, year:2021 },
+  { id:'14',   series:'std',  name:'iPhone 14',  sub:'6.1" OLED', notch:'small-notch', lenses:2, year:2022 },
+  { id:'15',   series:'std',  name:'iPhone 15',  sub:'6.1" OLED', notch:'island', lenses:2, year:2023 },
+  { id:'16',   series:'std',  name:'iPhone 16',  sub:'6.1" OLED', notch:'island', lenses:2, year:2024 },
+  // Pro
+  { id:'14p',  series:'pro',  name:'iPhone 14 Pro', sub:'6.1" Pro', notch:'island', lenses:3, year:2022 },
+  { id:'15p',  series:'pro',  name:'iPhone 15 Pro', sub:'6.1" Pro', notch:'island', lenses:3, year:2023 },
+  { id:'16p',  series:'pro',  name:'iPhone 16 Pro', sub:'6.3" Pro', notch:'island', lenses:3, year:2024 },
+  // Plus/Max
+  { id:'12m',  series:'plus', name:'iPhone 12 Mini', sub:'5.4"', notch:'notch', lenses:2, year:2020 },
+  { id:'14pl', series:'plus', name:'iPhone 14 Plus',  sub:'6.7"', notch:'small-notch', lenses:2, year:2022 },
+  { id:'15pm', series:'plus', name:'iPhone 15 Pro Max', sub:'6.7" Pro', notch:'island', lenses:3, year:2023 },
+  { id:'16pm', series:'plus', name:'iPhone 16 Pro Max', sub:'6.9" Pro', notch:'island', lenses:3, year:2024 },
+];
+
+const PRODUCTS = {
   '1': {
-    title: 'جراب كريستال شفاف',
-    sku: '1',
-    price: '149 جنيه',
-    color: 'شفاف / كريستال',
-    compat: 'آيفون',
-    image: 'https://miamicenters.com/wp-content/uploads/2025/09/2.png',
-    inStock: true,
+    name:'جراب كريستال شفاف', sku:'1',
+    price:'149 جنيه', color:'شفاف / كريستال',
+    image:'https://miamicenters.com/wp-content/uploads/2025/09/2.png',
   },
-  'CASE-15PM-CLR': {
-    title: 'جراب كريستال شفاف',
-    sku: 'CASE-15PM-CLR',
-    price: '149 جنيه',
-    color: 'شفاف / كريستال',
-    compat: 'iPhone 15 Pro Max',
-    image: 'https://miamicenters.com/wp-content/uploads/2025/09/2.png',
-    inStock: true,
-  },
-  'CASE-15-BLK': {
-    title: 'جراب سيليكون أسود',
-    sku: 'CASE-15-BLK',
-    price: '129 جنيه',
-    color: 'أسود',
-    compat: 'iPhone 15',
-    image: 'https://miamicenters.com/wp-content/uploads/2025/09/2.png',
-    inStock: true,
+  'DEMO': {
+    name:'جراب سيليكون أسود', sku:'DEMO',
+    price:'129 جنيه', color:'أسود',
+    image:'https://miamicenters.com/wp-content/uploads/2025/09/2.png',
   },
 };
 
-// ══════════════════════════════════════════════
-// STATE
-// ══════════════════════════════════════════════
-let selectedModel   = null;
-let codeReader      = null;
-let scanActive      = false;
-let currentProduct  = null;
-let threeInit       = false;
-let threeScene, threeCamera, threeRenderer, threePhone;
+/* ═══════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════ */
+let activeSeries   = 'std';
+let selectedModel  = null;
+let currentProduct = null;
+let scanner        = null;
+let scanRunning    = false;
+let three          = { init:false, scene:null, cam:null, renderer:null, group:null };
+let activeTab      = 'mockup';
 
-// ══════════════════════════════════════════════
-// BUILD MODEL GRID
-// ══════════════════════════════════════════════
-function buildModelGrid() {
+/* ═══════════════════════════════════════════
+   IN-APP BROWSER DETECTION
+═══════════════════════════════════════════ */
+(function(){
+  const ua = navigator.userAgent||'';
+  const isInApp =
+    /Instagram|FBAN|FBAV|Twitter|TikTok|Snapchat|WhatsApp|Line\//.test(ua) ||
+    (/iPhone|iPad/.test(ua) && !/Safari/.test(ua) && !/Chrome/.test(ua) && !/CriOS/.test(ua));
+  if(isInApp) document.getElementById('inapp-wall').classList.add('show');
+})();
+
+function copyUrl(){
+  navigator.clipboard?.writeText(location.href).then(()=>toast('✅ تم نسخ الرابط'));
+}
+
+/* ═══════════════════════════════════════════
+   BUILD UI
+═══════════════════════════════════════════ */
+function buildUI(){
+  // Series tabs
+  const st = document.getElementById('series-tabs');
+  SERIES.forEach(s=>{
+    const b = document.createElement('button');
+    b.className = 'series-tab' + (s.id===activeSeries?' active':'');
+    b.textContent = s.label;
+    b.onclick = ()=>{ activeSeries=s.id; buildGrid(); updateSeriesTabs(); };
+    st.appendChild(b);
+  });
+  buildGrid();
+}
+
+function updateSeriesTabs(){
+  document.querySelectorAll('.series-tab').forEach((b,i)=>{
+    b.classList.toggle('active', SERIES[i].id===activeSeries);
+  });
+}
+
+function buildGrid(){
   const grid = document.getElementById('model-grid');
-  grid.innerHTML = IPHONE_MODELS.map(m => `
-    <button class="model-btn" onclick="selectModel('${m.id}')" id="model-${m.id}">
-      <span class="model-icon">${m.icon}</span>
-      <span class="model-name">${m.name}</span>
-      <span class="model-sub">${m.sub}</span>
-    </button>
-  `).join('');
+  grid.innerHTML='';
+  MODELS.filter(m=>m.series===activeSeries).forEach(m=>{
+    const div = document.createElement('div');
+    div.className = 'model-card'+(selectedModel?.id===m.id?' selected':'');
+    div.innerHTML = `
+      ${phoneSVGthumb(m)}
+      <div class="model-card-name">${m.name.replace('iPhone ','')}</div>
+      <div class="model-card-sub">${m.sub}</div>
+    `;
+    div.onclick = ()=>selectModel(m);
+    grid.appendChild(div);
+  });
 }
 
-function selectModel(id) {
-  selectedModel = IPHONE_MODELS.find(m => m.id === id);
-  document.querySelectorAll('.model-btn').forEach(b => b.classList.remove('selected'));
-  document.getElementById('model-' + id).classList.add('selected');
-  document.getElementById('btn-go-scan').disabled = false;
+function selectModel(m){
+  selectedModel = m;
+  document.querySelectorAll('.model-card').forEach(c=>c.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+  document.getElementById('btn-continue').disabled = false;
 }
 
-// ══════════════════════════════════════════════
-// NAVIGATION
-// ══════════════════════════════════════════════
-function goTo(screen) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-' + screen).classList.add('active');
+/* ═══════════════════════════════════════════
+   PHONE SVG GENERATORS
+═══════════════════════════════════════════ */
+function phoneSVGthumb(model){
+  // Tiny thumbnail SVG for model card
+  const hasDI = model.notch === 'island';
+  const hasSmall = model.notch === 'small-notch';
+  const isPro3 = model.lenses >= 3;
+  return `<svg class="model-thumb" viewBox="0 0 40 68" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Body -->
+    <rect x="1" y="1" width="38" height="66" rx="9" fill="#1a1a2a" stroke="#3a3a5a" stroke-width="1.5"/>
+    <!-- Screen -->
+    <rect x="3.5" y="3.5" width="33" height="61" rx="7" fill="#0d0d1a"/>
+    <!-- Notch/Island -->
+    ${hasDI
+      ? `<rect x="11" y="6" width="18" height="5" rx="2.5" fill="#000"/>`
+      : hasSmall
+      ? `<rect x="14" y="5.5" width="12" height="5" rx="2.5" fill="#000"/>`
+      : `<rect x="10" y="4" width="20" height="6" rx="3" fill="#000"/>`
+    }
+    <!-- Camera -->
+    ${isPro3
+      ? `<rect x="23" y="10" width="13" height="13" rx="3" fill="#0d0d1a" stroke="#2a2a3a" stroke-width="1"/>
+         <circle cx="26.5" cy="13.5" r="2" fill="#070714"/><circle cx="32.5" cy="13.5" r="2" fill="#070714"/>
+         <circle cx="26.5" cy="19.5" r="2" fill="#070714"/>`
+      : `<rect x="24" y="11" width="11" height="7" rx="2.5" fill="#0d0d1a" stroke="#2a2a3a" stroke-width="1"/>
+         <circle cx="27" cy="14.5" r="2" fill="#070714"/><circle cx="32" cy="14.5" r="2" fill="#070714"/>`
+    }
+    <!-- Side btn -->
+    <rect x="39" y="20" width="2" height="14" rx="1" fill="#2a2a3a"/>
+  </svg>`;
+}
 
-  const steps = { model: '1', scan: '2', result: '3' };
-  document.getElementById('step-badge').innerHTML = `خطوة <strong>${steps[screen]}</strong> من 3`;
+/* Full-size phone SVG for mockup */
+function phoneSVGFull(model){
+  const hasDI    = model.notch === 'island';
+  const hasSmall = model.notch === 'small-notch';
+  const isPro3   = model.lenses >= 3;
+  const isMax    = model.sub.includes('6.7') || model.sub.includes('6.9');
 
-  if (screen === 'scan') startScanner();
+  // Aspect: tall phones are taller
+  const W = 100, H = isMax ? 210 : 200;
+  const CR = 22; // corner radius
+  const BW = 1.8; // border width
+
+  return `<svg viewBox="0 0 ${W} ${H}" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bodyGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2a2a40"/>
+      <stop offset="50%" stop-color="#1a1a2a"/>
+      <stop offset="100%" stop-color="#0d0d1a"/>
+    </linearGradient>
+    <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(255,255,255,.06)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+    </linearGradient>
+    <linearGradient id="screenGrad" x1="0" y1="0" x2=".4" y2="1">
+      <stop offset="0%" stop-color="#12122a"/>
+      <stop offset="100%" stop-color="#07070e"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-10%" width="140%" height="130%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="rgba(0,0,0,.6)"/>
+    </filter>
+  </defs>
+
+  <!-- Body -->
+  <rect x="${BW/2}" y="${BW/2}" width="${W-BW}" height="${H-BW}" rx="${CR}" fill="url(#bodyGrad)" stroke="#3a3a5a" stroke-width="${BW}" filter="url(#shadow)"/>
+
+  <!-- Gloss -->
+  <rect x="${BW/2}" y="${BW/2}" width="${W-BW}" height="${H/2}" rx="${CR}" fill="url(#gloss)"/>
+
+  <!-- Screen -->
+  <rect x="5" y="5" width="${W-10}" height="${H-10}" rx="${CR-2}" fill="url(#screenGrad)"/>
+
+  <!-- Notch / Dynamic Island -->
+  ${hasDI
+    ? `<rect x="${W/2-15}" y="10" width="30" height="8" rx="4" fill="#000"/>`
+    : hasSmall
+    ? `<rect x="${W/2-12}" y="9" width="24" height="8" rx="4" fill="#000"/>`
+    : `<rect x="${W/2-18}" y="8" width="36" height="10" rx="5" fill="#000"/>`
+  }
+
+  <!-- Camera module -->
+  ${isPro3 ? `
+    <rect x="${W-34}" y="18" width="26" height="26" rx="7" fill="#0a0a14" stroke="#252535" stroke-width="1.2"/>
+    <circle cx="${W-28}" cy="25" r="5" fill="#07070e" stroke="#1a1a2a" stroke-width=".8"/>
+    <circle cx="${W-14}" cy="25" r="5" fill="#07070e" stroke="#1a1a2a" stroke-width=".8"/>
+    <circle cx="${W-28}" cy="37" r="5" fill="#07070e" stroke="#1a1a2a" stroke-width=".8"/>
+    <circle cx="${W-28}" cy="25" r="2" fill="#0d0d20"/>
+    <circle cx="${W-14}" cy="25" r="2" fill="#0d0d20"/>
+    <circle cx="${W-28}" cy="37" r="2" fill="#0d0d20"/>
+    <circle cx="${W-14}" cy="37" r="3.5" fill="#1a1a28" stroke="#252535" stroke-width=".8"/>
+  ` : `
+    <rect x="${W-30}" y="20" width="22" height="13" rx="5" fill="#0a0a14" stroke="#252535" stroke-width="1.2"/>
+    <circle cx="${W-25}" cy="26.5" r="4.5" fill="#07070e" stroke="#1a1a2a" stroke-width=".8"/>
+    <circle cx="${W-12}" cy="26.5" r="4.5" fill="#07070e" stroke="#1a1a2a" stroke-width=".8"/>
+    <circle cx="${W-25}" cy="26.5" r="2" fill="#0d0d20"/>
+    <circle cx="${W-12}" cy="26.5" r="2" fill="#0d0d20"/>
+  `}
+
+  <!-- Flash -->
+  <circle cx="${W-10}" cy="${isPro3?38:32}" r="2.5" fill="#2a1800" stroke="#3a2200" stroke-width=".6"/>
+
+  <!-- Side buttons -->
+  <rect x="${W-1}" y="55" width="2.5" height="24" rx="1.2" fill="#2a2a40"/>
+  <rect x="-1.5" y="48" width="2.5" height="14" rx="1.2" fill="#2a2a40"/>
+  <rect x="-1.5" y="68" width="2.5" height="22" rx="1.2" fill="#2a2a40"/>
+
+  <!-- Screen glow dots (decorative) -->
+  <circle cx="${W/2}" cy="${H/2}" r="3" fill="rgba(124,111,255,.06)"/>
+</svg>`;
+}
+
+/* ═══════════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════════ */
+function goTo(id){
+  const all = document.querySelectorAll('.screen');
+  const current = document.querySelector('.screen.active');
+  const next = document.getElementById(id);
+
+  if(current === next) return;
+
+  current.classList.add('exit');
+  setTimeout(()=>{ current.classList.remove('active','exit'); },280);
+
+  next.classList.add('active');
+
+  const steps = { 's-model':1, 's-scan':2, 's-result':3 };
+  document.getElementById('step-num').textContent = steps[id]||1;
+
+  if(id==='s-scan') startScanner();
   else stopScanner();
 }
 
-function goToScan() { goTo('scan'); }
-
-// ══════════════════════════════════════════════
-// BARCODE SCANNER
-// ══════════════════════════════════════════════
-async function startScanner() {
-  if (scanActive) return;
-
-  try {
-    const ZXing = window.ZXing || window['@zxing/library'];
-    if (!ZXing) {
-      // fallback: no ZXing loaded, manual only
-      console.warn('ZXing not loaded, manual mode only');
-      return;
-    }
-
-    codeReader = new ZXing.BrowserMultiFormatReader();
-    const videoEl = document.getElementById('scanner-video');
-
-    await codeReader.decodeFromConstraints(
-      { video: { facingMode: 'environment' } },
-      videoEl,
-      (result, err) => {
-        if (result) {
-          scanActive = false;
-          processCode(result.getText());
-        }
+/* ═══════════════════════════════════════════
+   SCANNER
+═══════════════════════════════════════════ */
+async function startScanner(){
+  if(scanRunning) return;
+  try{
+    const ZX = window.ZXing;
+    if(!ZX){ console.warn('ZXing missing'); return; }
+    scanner = new ZX.BrowserMultiFormatReader();
+    await scanner.decodeFromConstraints(
+      { video:{ facingMode:'environment' } },
+      document.getElementById('scanner-video'),
+      (res, err)=>{
+        if(res){ scanRunning=false; processCode(res.getText()); }
       }
     );
-
-    scanActive = true;
-  } catch (e) {
-    console.error('Scanner error:', e);
-    showToast('تعذّر تشغيل الكاميرا — استخدم الإدخال اليدوي', true);
+    scanRunning = true;
+  }catch(e){
+    console.warn('Scanner:',e);
+    toast('تعذّر تشغيل الكاميرا — استخدم الإدخال اليدوي','error');
   }
 }
 
-function stopScanner() {
-  if (codeReader) {
-    codeReader.reset();
-    codeReader = null;
-  }
-  scanActive = false;
+function stopScanner(){
+  if(scanner){ scanner.reset(); scanner=null; }
+  scanRunning=false;
 }
 
-// ══════════════════════════════════════════════
-// PROCESS CODE → FETCH PRODUCT
-// ══════════════════════════════════════════════
-async function processCode(code) {
-  if (!code) return;
-  code = code.trim().toUpperCase();
+function handleManual(){
+  const v = document.getElementById('manual-code').value.trim();
+  if(v) processCode(v);
+}
 
+/* ═══════════════════════════════════════════
+   PROCESS CODE
+═══════════════════════════════════════════ */
+function processCode(code){
   stopScanner();
-  goTo('result');
-  showLoadingInResult();
+  code = code.toUpperCase();
+  let product = PRODUCTS[code] || PRODUCTS[code.toLowerCase()];
 
-  // Try demo first, then Shopify
-  let product = DEMO_PRODUCTS[code];
-
-  if (!product && SHOPIFY_TOKEN !== 'YOUR_STOREFRONT_ACCESS_TOKEN') {
-    product = await fetchFromShopify(code);
-  }
-
-  if (!product) {
-    // Not found — show demo product anyway
+  // Fallback demo
+  if(!product){
     product = {
-      title: `جراب كريستال شفاف`,
-      sku: code,
-      price: '149 جنيه',
-      color: 'شفاف / كريستال',
-      compat: selectedModel ? selectedModel.name : 'آيفون',
-      image: 'https://miamicenters.com/wp-content/uploads/2025/09/2.png',
-      inStock: true,
+      name:'جراب كريستال شفاف', sku:code,
+      price:'149 جنيه', color:'شفاف / كريستال',
+      image:'https://miamicenters.com/wp-content/uploads/2025/09/2.png',
     };
-    showToast('⚠️ عرض تجريبي — الكود غير مُعرّف بعد');
+    toast('⚠️ كود تجريبي — عرض نموذجي');
   }
 
   currentProduct = product;
-  renderResult(product);
-  // Pre-build 3D scene after short delay (tab may still be hidden)
-  setTimeout(() => {
-    // Switch to 3D tab temporarily to measure canvas, then back
-    const tab3d = document.getElementById('tab-3d');
-    const wasFlex = tab3d.style.display;
-    tab3d.style.display = 'block';
-    tab3d.style.visibility = 'hidden';
-    build3DScene(product.image);
-    tab3d.style.display = wasFlex;
-    tab3d.style.visibility = '';
-  }, 100);
+  renderResult();
+  goTo('s-result');
 }
 
-async function fetchFromShopify(sku) {
-  try {
-    const query = `{
-      products(first: 1, query: "sku:${sku}") {
-        edges { node {
-          title
-          variants(first: 1) { edges { node {
-            sku
-            price { amount currencyCode }
-            image { url }
-          }}}
-          images(first: 1) { edges { node { url } }}
-        }}
-      }
-    }`;
+/* ═══════════════════════════════════════════
+   RENDER RESULT
+═══════════════════════════════════════════ */
+function renderResult(){
+  const p = currentProduct;
+  const m = selectedModel || MODELS[0];
 
-    const res = await fetch(`https://${SHOPIFY_DOMAIN}/api/2024-01/graphql.json`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Shopify-Storefront-Access-Token': SHOPIFY_TOKEN,
-      },
-      body: JSON.stringify({ query }),
-    });
+  document.getElementById('r-name').textContent   = p.name;
+  document.getElementById('r-sku').textContent    = `كود: ${p.sku}`;
+  document.getElementById('r-price').textContent  = p.price;
+  document.getElementById('r-compat').textContent = m.name;
+  document.getElementById('r-color').textContent  = p.color;
 
-    const data = await res.json();
-    const node = data?.data?.products?.edges?.[0]?.node;
-    if (!node) return null;
-
-    const variant = node.variants.edges[0]?.node;
-    return {
-      title: node.title,
-      sku: variant?.sku || sku,
-      price: variant ? `${Math.round(variant.price.amount)} جنيه` : '—',
-      color: 'متعدد',
-      compat: selectedModel?.name || 'آيفون',
-      image: variant?.image?.url || node.images?.edges?.[0]?.node?.url || '',
-      inStock: true,
-    };
-  } catch (e) {
-    return null;
-  }
-}
-
-function showLoadingInResult() {
-  document.getElementById('res-title').textContent = '...';
-  document.getElementById('res-price').textContent = '...';
-  document.getElementById('res-sku').textContent = '...';
-}
-
-// ══════════════════════════════════════════════
-// RENDER RESULT
-// ══════════════════════════════════════════════
-function renderResult(product) {
-  document.getElementById('res-title').textContent  = product.title;
-  document.getElementById('res-price').textContent  = product.price;
-  document.getElementById('res-sku').textContent    = `كود: ${product.sku}`;
-  document.getElementById('res-compat').textContent = product.compat;
-  document.getElementById('res-color').textContent  = product.color;
-
-  // Update phone mockup
-  applyPhoneModel();
-
-  // Apply case image via CSS background (bypasses CORS for display)
+  // Inject phone SVG
+  const wrap = document.getElementById('phone-svg-wrap');
   const overlay = document.getElementById('case-overlay');
-  overlay.classList.remove('loaded');
-  if (product.image) {
-    overlay.style.backgroundImage = `url(${product.image})`;
-    // CSS background-image doesn't need CORS — just show it
-    setTimeout(() => overlay.classList.add('loaded'), 200);
-  }
+  wrap.innerHTML = phoneSVGFull(m);
+  wrap.appendChild(overlay);
+
+  // Apply case image
+  overlay.classList.remove('show');
+  overlay.style.backgroundImage = `url(${p.image})`;
+
+  // Adjust overlay shape to match phone
+  const isMax = m.sub.includes('6.7') || m.sub.includes('6.9');
+  overlay.style.aspectRatio = isMax ? '100/210' : '100/200';
+
+  setTimeout(()=> overlay.classList.add('show'), 150);
+
+  // Prime 3D in background
+  if(activeTab==='3d') init3D();
 }
 
-function applyPhoneModel() {
-  if (!selectedModel) return;
-  const module = document.getElementById('camera-module');
-  const hasPro = selectedModel.lenses >= 3;
-
-  if (hasPro) {
-    module.style.display = 'grid';
-    module.style.gridTemplateColumns = '1fr 1fr';
-    module.innerHTML = `
-      <div class="camera-lens"></div>
-      <div class="camera-lens"></div>
-      <div class="camera-lens"></div>
-      <div style="background:linear-gradient(135deg,#1a1a1a,#333);border-radius:50%;border:1px solid #444;"></div>
-    `;
-  } else {
-    module.style.gridTemplateColumns = '1fr 1fr';
-    module.innerHTML = `
-      <div class="camera-lens"></div>
-      <div class="camera-lens"></div>
-      <div style="background:transparent"></div>
-      <div style="background:transparent"></div>
-    `;
-  }
-}
-
-// ══════════════════════════════════════════════
-// TABS
-// ══════════════════════════════════════════════
-function switchTab(tab, btn) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+/* ═══════════════════════════════════════════
+   TABS
+═══════════════════════════════════════════ */
+function switchTab(id, btn){
+  document.querySelectorAll('.view-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   btn.classList.add('active');
-  document.getElementById('tab-' + tab).classList.add('active');
-
-  if (tab === '3d') {
-    // Use rAF to ensure tab is visible before measuring canvas
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        if (!threeInit) {
-          build3DScene(currentProduct?.image || '');
-        } else if (threeRenderer) {
-          // Resize renderer in case canvas changed size
-          const canvas = document.getElementById('three-canvas');
-          const w = canvas.clientWidth || 340;
-          const h = canvas.clientHeight || 340;
-          threeRenderer.setSize(w, h);
-          threeCamera.aspect = w / h;
-          threeCamera.updateProjectionMatrix();
-        }
-      });
-    });
-  }
+  document.getElementById('tab-'+id).classList.add('active');
+  activeTab = id;
+  if(id==='3d') requestAnimationFrame(()=>requestAnimationFrame(init3D));
 }
 
-// ══════════════════════════════════════════════
-// THREE.JS 3D PHONE
-// ══════════════════════════════════════════════
-function build3DScene(caseImageUrl) {
-  if (threeInit) {
-    // Update texture only
-    updateCaseTexture(caseImageUrl);
-    return;
-  }
+/* ═══════════════════════════════════════════
+   THREE.JS — CINEMATIC PHONE
+═══════════════════════════════════════════ */
+function init3D(){
+  if(three.init){ resize3D(); return; }
 
-  threeInit = true;
-  const canvas = document.getElementById('three-canvas');
-  const w = canvas.clientWidth  || canvas.offsetWidth  || 340;
-  const h = canvas.clientHeight || canvas.offsetHeight || 340;
+  const canvas = document.getElementById('canvas3d');
+  const W = canvas.clientWidth  || 340;
+  const H = canvas.clientHeight || 360;
 
-  threeScene    = new THREE.Scene();
-  threeCamera   = new THREE.PerspectiveCamera(45, w / h, 0.1, 100);
-  threeCamera.position.set(0, 0, 3.5);
+  if(W===0||H===0){ setTimeout(init3D,80); return; }
 
-  threeRenderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-  threeRenderer.setSize(w, h);
-  threeRenderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-  threeRenderer.shadowMap.enabled = true;
+  three.init = true;
 
-  // Lights
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-  threeScene.add(ambientLight);
+  // Scene
+  const scene = new THREE.Scene();
+  three.scene = scene;
+  scene.background = null;
 
-  const keyLight = new THREE.DirectionalLight(0xffffff, 1.2);
-  keyLight.position.set(2, 3, 4);
-  threeScene.add(keyLight);
+  // Camera
+  const cam = new THREE.PerspectiveCamera(38, W/H, 0.1, 100);
+  cam.position.set(0, 0, 4.2);
+  three.cam = cam;
 
-  const rimLight = new THREE.DirectionalLight(0x6c63ff, 0.8);
-  rimLight.position.set(-3, -1, -2);
-  threeScene.add(rimLight);
+  // Renderer
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
+  renderer.setSize(W, H);
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2.5));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.1;
+  three.renderer = renderer;
 
-  // Build phone geometry
-  buildPhoneGeometry(caseImageUrl);
+  // Lights — cinematic 3-point
+  const ambient = new THREE.AmbientLight(0x8080ff, 0.3);
+  scene.add(ambient);
 
-  // Drag to rotate
-  let isDragging = false, prevX = 0, prevY = 0;
-  let rotX = 0, rotY = 0, velX = 0, velY = 0;
+  const key = new THREE.DirectionalLight(0xffffff, 2.5);
+  key.position.set(2.5, 3, 4);
+  key.castShadow = true;
+  scene.add(key);
 
-  canvas.addEventListener('mousedown',  e => { isDragging = true; prevX = e.clientX; prevY = e.clientY; });
-  canvas.addEventListener('touchstart', e => { isDragging = true; prevX = e.touches[0].clientX; prevY = e.touches[0].clientY; });
+  const fill = new THREE.DirectionalLight(0x6060ff, 0.8);
+  fill.position.set(-3, 0, 2);
+  scene.add(fill);
 
-  window.addEventListener('mouseup',  () => isDragging = false);
-  window.addEventListener('touchend', () => isDragging = false);
+  const rim = new THREE.DirectionalLight(0xa078ff, 1.2);
+  rim.position.set(-1, -3, -3);
+  scene.add(rim);
 
-  canvas.addEventListener('mousemove', e => {
-    if (!isDragging) return;
-    velY += (e.clientX - prevX) * 0.01;
-    velX += (e.clientY - prevY) * 0.01;
-    prevX = e.clientX; prevY = e.clientY;
+  // Environment (simple gradient)
+  const envTex = new THREE.CubeCamera; // skip, use lights only
+
+  // Build phone
+  const group = buildPhone3D();
+  scene.add(group);
+  three.group = group;
+
+  // Drag
+  let drag=false, px=0, py=0, vx=0, vy=0;
+  canvas.addEventListener('mousedown', e=>{ drag=true; px=e.clientX; py=e.clientY; vx=vy=0; });
+  canvas.addEventListener('touchstart', e=>{ drag=true; px=e.touches[0].clientX; py=e.touches[0].clientY; vx=vy=0; },{passive:true});
+  window.addEventListener('mouseup', ()=>drag=false);
+  window.addEventListener('touchend', ()=>drag=false);
+  canvas.addEventListener('mousemove', e=>{
+    if(!drag)return;
+    vx=(e.clientY-py)*.012; vy=(e.clientX-px)*.012;
+    px=e.clientX; py=e.clientY;
   });
+  canvas.addEventListener('touchmove', e=>{
+    if(!drag)return;
+    vx=(e.touches[0].clientY-py)*.012; vy=(e.touches[0].clientX-px)*.012;
+    px=e.touches[0].clientX; py=e.touches[0].clientY;
+  },{passive:true});
 
-  canvas.addEventListener('touchmove', e => {
-    if (!isDragging) return;
-    velY += (e.touches[0].clientX - prevX) * 0.01;
-    velX += (e.touches[0].clientY - prevY) * 0.01;
-    prevX = e.touches[0].clientX; prevY = e.touches[0].clientY;
-  });
-
-  const animate = () => {
-    requestAnimationFrame(animate);
-
-    if (!isDragging) {
-      velY *= 0.95;
-      velX *= 0.95;
-      if (Math.abs(velX) < 0.0001 && Math.abs(velY) < 0.0001) {
-        // Auto-rotate slowly when idle
-        threePhone && (threePhone.rotation.y += 0.005);
-      }
+  // Animate
+  const clock = new THREE.Clock();
+  (function loop(){
+    requestAnimationFrame(loop);
+    const t = clock.getDelta();
+    if(drag){ vx*=.9; vy*=.9; }
+    else {
+      vx*=.94; vy*=.94;
+      // Gentle auto-rotate when idle
+      if(Math.abs(vx)<.001 && Math.abs(vy)<.001) vy += .005;
     }
+    group.rotation.x += vx;
+    group.rotation.y += vy;
+    group.rotation.x = Math.max(-Math.PI/3, Math.min(Math.PI/3, group.rotation.x));
+    // Subtle float
+    group.position.y = Math.sin(clock.elapsedTime*.6) * .04;
+    renderer.render(scene, cam);
+  })();
 
-    rotY += velY;
-    rotX += velX;
-    rotX = Math.max(-Math.PI/4, Math.min(Math.PI/4, rotX));
-
-    if (threePhone) {
-      threePhone.rotation.x += (rotX - threePhone.rotation.x) * 0.1;
-      threePhone.rotation.y += velY;
-    }
-
-    threeRenderer.render(threeScene, threeCamera);
-  };
-
-  animate();
+  // Apply texture
+  applyCase3D();
 }
 
-function buildPhoneGeometry(caseImageUrl) {
-  const group = new THREE.Group();
+function buildPhone3D(){
+  const g = new THREE.Group();
+  const m = selectedModel || MODELS[0];
+  const isPro3 = m.lenses >= 3;
+  const isMax  = m.sub.includes('6.7') || m.sub.includes('6.9');
 
-  // ── Phone body ──
-  const bodyGeo = new THREE.BoxGeometry(0.75, 1.6, 0.08, 1, 1, 1);
+  const H = isMax ? 2.6 : 2.4;
+  const W = 1.22;
+  const D = 0.095;
+  const R = 0.22; // corner radius (simulated with segment count)
+
+  // ── Body ──
+  const bodyGeo = roundedBoxGeometry(W, H, D, R, 4);
   const bodyMat = new THREE.MeshStandardMaterial({
-    color: 0x1c1c1e,
-    metalness: 0.9,
-    roughness: 0.1,
+    color: 0x1a1a2a,
+    metalness: isPro3 ? 0.92 : 0.4,
+    roughness: isPro3 ? 0.08 : 0.35,
   });
   const body = new THREE.Mesh(bodyGeo, bodyMat);
-  group.add(body);
+  body.castShadow = true;
+  g.add(body);
 
-  // ── Screen ──
-  const screenGeo = new THREE.PlaneGeometry(0.65, 1.4);
+  // ── Screen glass (front) ──
+  const screenGeo = new THREE.PlaneGeometry(W*.88, H*.92);
   const screenMat = new THREE.MeshStandardMaterial({
-    color: 0x1a1a2e,
-    emissive: 0x101025,
+    color: 0x07070e,
+    roughness: 0.0,
+    metalness: 0.0,
+    emissive: 0x080820,
     emissiveIntensity: 0.5,
   });
   const screen = new THREE.Mesh(screenGeo, screenMat);
-  screen.position.z = 0.045;
-  group.add(screen);
+  screen.position.z = D/2 + 0.001;
+  g.add(screen);
 
-  // ── Camera bump ──
-  const cameraGeo = new THREE.BoxGeometry(0.22, 0.22, 0.015);
-  const cameraMat = new THREE.MeshStandardMaterial({
-    color: 0x0a0a0a,
-    metalness: 0.8,
-    roughness: 0.2,
+  // ── Screen shine ──
+  const shineGeo = new THREE.PlaneGeometry(W*.88, H*.92);
+  const shineMat = new THREE.MeshStandardMaterial({
+    color: 0xffffff, transparent:true, opacity:0.04,
+    roughness: 0, metalness: 0,
   });
-  const cameraBump = new THREE.Mesh(cameraGeo, cameraMat);
-  cameraBump.position.set(0.2, 0.5, 0.048);
-  group.add(cameraBump);
+  const shine = new THREE.Mesh(shineGeo, shineMat);
+  shine.position.z = D/2 + 0.002;
+  g.add(shine);
 
-  // Camera lenses
-  const lensGeo = new THREE.CircleGeometry(0.04, 16);
-  const lensMat = new THREE.MeshStandardMaterial({ color: 0x050510, metalness: 0.5 });
-
-  const lensPositions = selectedModel?.lenses >= 3
-    ? [[-0.04, 0.55], [0.04, 0.55], [-0.04, 0.47], [0.04, 0.47]]
-    : [[-0.04, 0.52], [0.04, 0.52]];
-
-  lensPositions.forEach(([x, y]) => {
-    const lens = new THREE.Mesh(lensGeo, lensMat);
-    lens.position.set(x + 0.2, y, 0.056);
-    group.add(lens);
-  });
-
-  // ── Case overlay ──
-  const caseGeo = new THREE.BoxGeometry(0.79, 1.64, 0.09);
-
-  // 3D case material — try texture, fallback to tinted transparent
-  const caseMat = new THREE.MeshStandardMaterial({
-    color: 0xffffff,
-    transparent: true,
-    opacity: 0.85,
-    metalness: 0.0,
-    roughness: 0.6,
-    side: THREE.FrontSide,
-  });
-
-  if (caseImageUrl) {
-    const loader = new THREE.TextureLoader();
-    loader.crossOrigin = 'anonymous';
-    loader.load(
-      caseImageUrl,
-      tex => {
-        tex.encoding = THREE.sRGBEncoding;
-        caseMat.map = tex;
-        caseMat.color.set(0xffffff);
-        caseMat.needsUpdate = true;
-      },
-      undefined,
-      () => {
-        // CORS blocked — show purple tint instead
-        caseMat.color = new THREE.Color(0x7c6fff);
-        caseMat.opacity = 0.3;
-        caseMat.needsUpdate = true;
-      }
-    );
+  // ── Dynamic Island / notch ──
+  const hasDI = m.notch === 'island';
+  if(hasDI){
+    const diGeo = new THREE.CylinderGeometry(0.05, 0.05, 0.22, 24);
+    diGeo.rotateZ(Math.PI/2);
+    const diMat = new THREE.MeshStandardMaterial({ color:0x000000, roughness:.1 });
+    const di = new THREE.Mesh(diGeo, diMat);
+    di.position.set(0, H/2 - 0.16, D/2 + 0.003);
+    g.add(di);
+  } else {
+    const nGeo = new THREE.CylinderGeometry(0.07, 0.07, 0.3, 24);
+    nGeo.rotateZ(Math.PI/2);
+    const nMat = new THREE.MeshStandardMaterial({ color:0x000000, roughness:.1 });
+    const n = new THREE.Mesh(nGeo, nMat);
+    n.position.set(0, H/2 - 0.18, D/2 + 0.003);
+    g.add(n);
   }
 
+  // ── Camera module ──
+  const camBumpH = isPro3 ? 0.38 : 0.22;
+  const camBumpGeo = roundedBoxGeometry(0.36, camBumpH, 0.03, 0.06, 3);
+  const camBumpMat = new THREE.MeshStandardMaterial({
+    color: isPro3 ? 0x111118 : 0x111118,
+    metalness: 0.85, roughness: 0.12,
+  });
+  const camBump = new THREE.Mesh(camBumpGeo, camBumpMat);
+  camBump.position.set(W*.27, H*.28, D/2 + 0.016);
+  g.add(camBump);
+
+  // Lenses
+  const lensPositions = isPro3
+    ? [[-0.08, 0.09],[0.08, 0.09],[-0.08,-0.06]]
+    : [[-0.07, 0],   [0.07, 0]];
+
+  lensPositions.forEach(([lx,ly])=>{
+    const lensRing = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.072,0.072,0.01,32),
+      new THREE.MeshStandardMaterial({ color:0x222230, metalness:.9, roughness:.1 })
+    );
+    lensRing.rotateX(Math.PI/2);
+    lensRing.position.set(W*.27+lx, H*.28+ly, D/2+0.03);
+    g.add(lensRing);
+
+    const lens = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.055,0.055,0.015,32),
+      new THREE.MeshStandardMaterial({ color:0x030308, metalness:.3, roughness:.05 })
+    );
+    lens.rotateX(Math.PI/2);
+    lens.position.set(W*.27+lx, H*.28+ly, D/2+0.035);
+    g.add(lens);
+  });
+
+  // ── Side frame highlights ──
+  // Right
+  const sideR = new THREE.Mesh(
+    new THREE.BoxGeometry(0.008, H*.5, D*.4),
+    new THREE.MeshStandardMaterial({ color:isPro3?0x888899:0x333344, metalness:.9, roughness:.05 })
+  );
+  sideR.position.set(W/2-0.004, 0, 0);
+  g.add(sideR);
+
+  // ── Back glass ──
+  const backGeo = new THREE.PlaneGeometry(W*.94, H*.96);
+  const backMat = new THREE.MeshStandardMaterial({
+    color: isPro3 ? 0x111118 : 0x141420,
+    roughness: isPro3 ? 0.05 : 0.3,
+    metalness: isPro3 ? 0.9 : 0.1,
+  });
+  const back = new THREE.Mesh(backGeo, backMat);
+  back.rotation.y = Math.PI;
+  back.position.z = -D/2 - 0.001;
+  g.add(back);
+
+  // ── Case overlay (front) ──
+  const caseGeo = new THREE.PlaneGeometry(W*1.04, H*1.02);
+  const caseMat = new THREE.MeshStandardMaterial({
+    color: 0xffffff, transparent:true, opacity:0,
+    roughness:.7, metalness:.0,
+    depthWrite: false,
+  });
   const caseMesh = new THREE.Mesh(caseGeo, caseMat);
-  caseMesh.position.z = -0.005;
-  group.add(caseMesh);
+  caseMesh.position.z = D/2 + 0.004;
+  caseMesh.name = 'case';
+  g.add(caseMesh);
 
-  group.rotation.x = 0.1;
-  group.rotation.y = -0.3;
-
-  threeScene.add(group);
-  threePhone = group;
+  g.rotation.y = -0.3;
+  g.rotation.x = 0.1;
+  return g;
 }
 
-function updateCaseTexture(url) {
-  if (!url || !threePhone) return;
-  // Texture update handled in buildPhoneGeometry
+// Rounded box helper using CylinderGeometry edges (approximation via BoxGeometry with high segments)
+function roundedBoxGeometry(w, h, d, r, segs){
+  // Use ExtrudeGeometry for proper rounded box
+  const shape = new THREE.Shape();
+  shape.moveTo(-w/2+r, -h/2);
+  shape.lineTo( w/2-r, -h/2);
+  shape.quadraticCurveTo( w/2, -h/2, w/2, -h/2+r);
+  shape.lineTo( w/2,  h/2-r);
+  shape.quadraticCurveTo( w/2,  h/2, w/2-r,  h/2);
+  shape.lineTo(-w/2+r,  h/2);
+  shape.quadraticCurveTo(-w/2,  h/2,-w/2,  h/2-r);
+  shape.lineTo(-w/2, -h/2+r);
+  shape.quadraticCurveTo(-w/2, -h/2,-w/2+r,-h/2);
+
+  const geo = new THREE.ExtrudeGeometry(shape, {
+    depth: d,
+    bevelEnabled: true,
+    bevelThickness: r*.3,
+    bevelSize: r*.3,
+    bevelSegments: segs,
+  });
+  geo.center();
+  return geo;
 }
 
-// ══════════════════════════════════════════════
-// ADD TO CART
-// ══════════════════════════════════════════════
-function addToCart() {
-  showToast('✅ تم الإضافة للسلة!');
-  // TODO: Shopify AJAX cart add
-}
+function applyCase3D(){
+  if(!three.group || !currentProduct?.image) return;
+  const caseMesh = three.group.getObjectByName('case');
+  if(!caseMesh) return;
 
-// ══════════════════════════════════════════════
-// TOAST
-// ══════════════════════════════════════════════
-function showToast(msg, isError = false) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.className = 'toast show' + (isError ? ' error' : '');
-  setTimeout(() => el.className = 'toast', 3000);
-}
-
-// ══════════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════════
-buildModelGrid();
-
-// Demo: simulate barcode scan after 3 seconds on scan screen (for testing)
-// Remove this in production
-
-// ══════════════════════════════════════════════
-// IN-APP BROWSER DETECTION
-// ══════════════════════════════════════════════
-function isInAppBrowser() {
-  const ua = navigator.userAgent || '';
-  return (
-    /Instagram/.test(ua) ||
-    /FBAN|FBAV/.test(ua) ||
-    /Twitter/.test(ua) ||
-    /TikTok/.test(ua) ||
-    /Snapchat/.test(ua) ||
-    /Line\//.test(ua) ||
-    /WhatsApp/.test(ua) ||
-    (!/Safari/.test(ua) && /iPhone|iPad|iPod/.test(ua) && !/Chrome/.test(ua))
+  const loader = new THREE.TextureLoader();
+  loader.crossOrigin = 'anonymous';
+  loader.load(
+    currentProduct.image,
+    tex=>{
+      caseMesh.material.map = tex;
+      caseMesh.material.opacity = 0.92;
+      caseMesh.material.needsUpdate = true;
+    },
+    undefined,
+    ()=>{
+      // CORS fallback — subtle tint
+      caseMesh.material.color.set(0x7c6fff);
+      caseMesh.material.opacity = 0.18;
+      caseMesh.material.needsUpdate = true;
+    }
   );
 }
 
-function showInAppWarning() {
-  document.getElementById('inapp-screen').classList.add('show');
-  const urlEl = document.getElementById('url-display');
-  if (urlEl) urlEl.textContent = location.href;
-}
-
-function copyUrl() {
-  const url = location.href;
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(url).then(() => showToast('✅ تم نسخ الرابط!'));
-  } else {
-    const ta = document.createElement('textarea');
-    ta.value = url;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    ta.remove();
-    showToast('✅ تم نسخ الرابط!');
+function resize3D(){
+  if(!three.renderer || !three.cam) return;
+  const canvas = document.getElementById('canvas3d');
+  const W = canvas.clientWidth, H = canvas.clientHeight;
+  if(W && H){
+    three.renderer.setSize(W, H);
+    three.cam.aspect = W/H;
+    three.cam.updateProjectionMatrix();
   }
 }
 
-// Check on load
-if (isInAppBrowser()) {
-  showInAppWarning();
+/* ═══════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════ */
+function toast(msg, type=''){
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show ' + type;
+  clearTimeout(el._t);
+  el._t = setTimeout(()=> el.className='toast', 2800);
 }
 
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
+buildUI();
 </script>
 </body>
 </html>
