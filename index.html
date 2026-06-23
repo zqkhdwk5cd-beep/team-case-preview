@@ -1,0 +1,1540 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Team Store – اختار جرابك</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --card: #1a1a24;
+    --border: #2a2a3a;
+    --accent: #6c63ff;
+    --accent2: #a78bfa;
+    --gold: #f59e0b;
+    --text: #f0f0f8;
+    --muted: #7070a0;
+    --success: #10b981;
+    --radius: 20px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Cairo', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100dvh;
+    overflow-x: hidden;
+  }
+
+  /* ── AMBIENT BG ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 20% 10%, rgba(108,99,255,.18) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 30% at 80% 90%, rgba(167,139,250,.12) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(10,10,15,.8);
+    backdrop-filter: blur(20px);
+  }
+
+  .logo {
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #fff 0%, var(--accent2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .logo span { color: var(--gold); -webkit-text-fill-color: var(--gold); }
+
+  .step-badge {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    padding: 6px 14px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .step-badge strong { color: var(--accent2); }
+
+  /* ── SCREENS ── */
+  .screen {
+    display: none;
+    position: relative;
+    z-index: 1;
+    padding: 28px 20px;
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: calc(100dvh - 70px);
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 20px;
+  }
+
+  .screen.active { display: flex; }
+
+  /* ── HERO TITLE ── */
+  .hero-title {
+    text-align: center;
+    margin-bottom: 8px;
+  }
+
+  .hero-title h1 {
+    font-size: 28px;
+    font-weight: 900;
+    line-height: 1.2;
+  }
+
+  .hero-title p {
+    font-size: 15px;
+    color: var(--muted);
+    margin-top: 8px;
+    line-height: 1.6;
+  }
+
+  .pill {
+    display: inline-block;
+    background: rgba(108,99,255,.15);
+    border: 1px solid rgba(108,99,255,.3);
+    color: var(--accent2);
+    border-radius: 50px;
+    padding: 5px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+
+  /* ── MODEL GRID ── */
+  .model-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .model-btn {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 16px 12px;
+    cursor: pointer;
+    transition: all .2s;
+    text-align: center;
+    color: var(--text);
+  }
+
+  .model-btn:active { transform: scale(.96); }
+
+  .model-btn.selected {
+    border-color: var(--accent);
+    background: rgba(108,99,255,.12);
+    box-shadow: 0 0 0 1px var(--accent), 0 8px 32px rgba(108,99,255,.2);
+  }
+
+  .model-btn .model-name {
+    font-size: 14px;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 3px;
+  }
+
+  .model-btn .model-sub {
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .model-btn .model-icon {
+    font-size: 28px;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  /* ── PRIMARY BUTTON ── */
+  .btn-primary {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--accent) 0%, #8b5cf6 100%);
+    border: none;
+    border-radius: 14px;
+    color: #fff;
+    font-family: 'Cairo', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .2s;
+    box-shadow: 0 8px 24px rgba(108,99,255,.35);
+  }
+
+  .btn-primary:active { transform: scale(.97); }
+  .btn-primary:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+
+  .btn-secondary {
+    width: 100%;
+    padding: 14px;
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    color: var(--text);
+    font-family: 'Cairo', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .2s;
+  }
+
+  .btn-secondary:active { transform: scale(.97); }
+
+  /* ── SCANNER ── */
+  .scanner-wrap {
+    width: 100%;
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    background: #000;
+    aspect-ratio: 1;
+  }
+
+  #scanner-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .scanner-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  .scan-frame {
+    width: 65%;
+    aspect-ratio: 1;
+    position: relative;
+  }
+
+  .scan-frame::before, .scan-frame::after,
+  .scan-frame .corner2::before, .scan-frame .corner2::after {
+    content: '';
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border-color: var(--accent);
+    border-style: solid;
+  }
+
+  .scan-frame::before { top: 0; right: 0; border-width: 3px 3px 0 0; border-radius: 0 6px 0 0; }
+  .scan-frame::after  { bottom: 0; right: 0; border-width: 0 3px 3px 0; border-radius: 0 0 6px 0; }
+  .scan-frame .corner2::before { top: 0; left: 0; border-width: 3px 0 0 3px; border-radius: 6px 0 0 0; }
+  .scan-frame .corner2::after  { bottom: 0; left: 0; border-width: 0 0 3px 3px; border-radius: 0 0 0 6px; }
+
+  .scan-line {
+    position: absolute;
+    left: 10%; right: 10%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    border-radius: 2px;
+    animation: scan 2s ease-in-out infinite;
+  }
+
+  @keyframes scan {
+    0%   { top: 10%; opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 1; }
+    100% { top: 90%; opacity: 0; }
+  }
+
+  .scanner-hint {
+    text-align: center;
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* OR divider */
+  .or-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .or-divider::before, .or-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Manual input */
+  .manual-input {
+    width: 100%;
+    display: flex;
+    gap: 10px;
+  }
+
+  .manual-input input {
+    flex: 1;
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 13px 16px;
+    color: var(--text);
+    font-family: 'Cairo', sans-serif;
+    font-size: 15px;
+    outline: none;
+    direction: ltr;
+  }
+
+  .manual-input input:focus { border-color: var(--accent); }
+
+  .manual-input button {
+    background: var(--accent);
+    border: none;
+    border-radius: 12px;
+    padding: 13px 20px;
+    color: #fff;
+    font-family: 'Cairo', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: .2s;
+  }
+
+  .manual-input button:active { transform: scale(.95); }
+
+  /* ── RESULT SCREEN ── */
+  .product-card {
+    width: 100%;
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  .product-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .product-title {
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .product-price {
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--gold);
+  }
+
+  .product-sku {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* ── TABS ── */
+  .tabs {
+    display: flex;
+    gap: 0;
+    background: var(--surface);
+    padding: 4px;
+    border-radius: 12px;
+    width: 100%;
+  }
+
+  .tab-btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: none;
+    border-radius: 10px;
+    color: var(--muted);
+    font-family: 'Cairo', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: .2s;
+  }
+
+  .tab-btn.active {
+    background: var(--card);
+    color: var(--text);
+    box-shadow: 0 2px 8px rgba(0,0,0,.3);
+  }
+
+  /* ── MOCKUP VIEW ── */
+  .mockup-view {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 340px;
+    position: relative;
+  }
+
+  .phone-mockup {
+    width: 200px;
+    position: relative;
+  }
+
+  .phone-frame {
+    width: 100%;
+    position: relative;
+  }
+
+  .phone-body {
+    width: 100%;
+    aspect-ratio: 9/19.5;
+    background: linear-gradient(145deg, #1c1c1e 0%, #2c2c2e 40%, #1c1c1e 100%);
+    border-radius: 42px;
+    border: 2px solid #3a3a3c;
+    position: relative;
+    box-shadow:
+      0 0 0 1px #000,
+      inset 0 1px 0 rgba(255,255,255,.08),
+      0 40px 80px rgba(0,0,0,.6),
+      0 20px 40px rgba(0,0,0,.4);
+    overflow: hidden;
+  }
+
+  .phone-screen {
+    position: absolute;
+    inset: 6px;
+    border-radius: 36px;
+    background: linear-gradient(160deg, #1a1a2e 0%, #16213e 100%);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .phone-screen-content {
+    font-size: 11px;
+    color: rgba(255,255,255,.3);
+    text-align: center;
+  }
+
+  .phone-notch {
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 24px;
+    background: #000;
+    border-radius: 20px;
+    z-index: 10;
+  }
+
+  /* Side buttons */
+  .phone-btn-right {
+    position: absolute;
+    right: -3px;
+    top: 30%;
+    width: 3px;
+    height: 60px;
+    background: #3a3a3c;
+    border-radius: 0 2px 2px 0;
+  }
+
+  .phone-btn-left1 {
+    position: absolute;
+    left: -3px;
+    top: 22%;
+    width: 3px;
+    height: 30px;
+    background: #3a3a3c;
+    border-radius: 2px 0 0 2px;
+  }
+
+  .phone-btn-left2 {
+    position: absolute;
+    left: -3px;
+    top: 36%;
+    width: 3px;
+    height: 50px;
+    background: #3a3a3c;
+    border-radius: 2px 0 0 2px;
+  }
+
+  .case-overlay {
+    position: absolute;
+    inset: -4px;
+    border-radius: 46px;
+    background-image: var(--case-img);
+    background-size: cover;
+    background-position: center;
+    z-index: 5;
+    opacity: 0;
+    transition: opacity .4s;
+  }
+
+  .case-overlay.loaded { opacity: 1; }
+
+  /* Camera module (Pro) */
+  .camera-module {
+    position: absolute;
+    top: 14%;
+    right: 8%;
+    width: 32%;
+    aspect-ratio: 1;
+    background: linear-gradient(145deg, #0a0a0a, #1a1a1a);
+    border-radius: 28%;
+    border: 1.5px solid #2a2a2a;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px;
+    padding: 4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.5);
+  }
+
+  .camera-lens {
+    background: radial-gradient(circle at 30% 30%, #1a1a3e, #000);
+    border-radius: 50%;
+    border: 1px solid #333;
+  }
+
+  /* ── 3D CANVAS ── */
+  #three-canvas {
+    width: 100%;
+    height: 340px;
+    border-radius: 16px;
+    display: block;
+  }
+
+  .tab-content { display: none; width: 100%; }
+  .tab-content.active { display: block; }
+
+  /* ── INFO SECTION ── */
+  .info-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    width: 100%;
+  }
+
+  .info-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(108,99,255,.15);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .info-label { font-size: 12px; color: var(--muted); }
+  .info-val   { font-size: 15px; font-weight: 700; }
+
+  /* ── LOADING ── */
+  .loading-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 40px;
+  }
+
+  .spinner {
+    width: 48px;
+    height: 48px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin .8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── IN-APP BROWSER WARNING ── */
+  #inapp-screen {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: var(--bg);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 24px;
+    text-align: center;
+    gap: 20px;
+  }
+
+  #inapp-screen.show { display: flex; }
+
+  .inapp-icon {
+    font-size: 64px;
+    line-height: 1;
+  }
+
+  .inapp-title {
+    font-size: 24px;
+    font-weight: 900;
+    line-height: 1.3;
+  }
+
+  .inapp-desc {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 320px;
+  }
+
+  .inapp-steps {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 20px;
+    width: 100%;
+    max-width: 340px;
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .inapp-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .inapp-step-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .inapp-step-text {
+    font-size: 14px;
+    line-height: 1.5;
+    padding-top: 4px;
+  }
+
+  .inapp-step-text strong {
+    display: block;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+
+  .inapp-step-text span {
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .copy-url-btn {
+    width: 100%;
+    max-width: 340px;
+    padding: 15px;
+    background: var(--card);
+    border: 1.5px solid var(--accent);
+    border-radius: 14px;
+    color: var(--accent2);
+    font-family: 'Cairo', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: .2s;
+  }
+
+  .copy-url-btn:active { opacity: .7; }
+
+  .safari-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(108,99,255,.1);
+    border: 1px solid rgba(108,99,255,.2);
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: var(--muted);
+    max-width: 340px;
+    width: 100%;
+  }
+
+  .safari-badge .safari-icon { font-size: 24px; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--success);
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 14px;
+    z-index: 100;
+    opacity: 0;
+    transition: all .3s;
+    white-space: nowrap;
+    box-shadow: 0 8px 24px rgba(16,185,129,.4);
+  }
+
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.error { background: #ef4444; box-shadow: 0 8px 24px rgba(239,68,68,.4); }
+
+  /* ── BACK BTN ── */
+  .back-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: 'Cairo', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 0;
+    align-self: flex-start;
+    transition: color .2s;
+  }
+
+  .back-btn:hover { color: var(--text); }
+
+  /* ── ADD TO CART ── */
+  .cart-btn {
+    width: 100%;
+    padding: 18px;
+    background: linear-gradient(135deg, var(--gold) 0%, #f97316 100%);
+    border: none;
+    border-radius: 14px;
+    color: #000;
+    font-family: 'Cairo', sans-serif;
+    font-size: 17px;
+    font-weight: 900;
+    cursor: pointer;
+    transition: all .2s;
+    box-shadow: 0 8px 24px rgba(245,158,11,.35);
+    letter-spacing: .5px;
+  }
+
+  .cart-btn:active { transform: scale(.97); }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+  }
+
+  .empty-state .empty-icon { font-size: 52px; margin-bottom: 16px; }
+  .empty-state h3 { color: var(--text); font-size: 18px; margin-bottom: 8px; }
+  .empty-state p { font-size: 14px; line-height: 1.6; }
+
+  /* Responsive */
+  @media (max-width: 360px) {
+    .model-grid { grid-template-columns: 1fr 1fr; }
+    header { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">TEAM<span>STORE</span></div>
+  <div class="step-badge" id="step-badge">خطوة <strong>1</strong> من 3</div>
+</header>
+
+<!-- ══════════════════════════════════
+     SCREEN 1: اختار الموديل
+══════════════════════════════════ -->
+<div class="screen active" id="screen-model">
+  <div class="hero-title">
+    <div class="pill">🎯 اختار موديلك</div>
+    <h1>إيه موديل آيفونك؟</h1>
+    <p>اختار موديلك عشان نعرض الجراب عليه بشكل حقيقي</p>
+  </div>
+
+  <div class="model-grid" id="model-grid">
+    <!-- Generated by JS -->
+  </div>
+
+  <button class="btn-primary" id="btn-go-scan" disabled onclick="goToScan()">
+    استمر لمسح الجراب ←
+  </button>
+</div>
+
+<!-- ══════════════════════════════════
+     SCREEN 2: سكان الباركود
+══════════════════════════════════ -->
+<div class="screen" id="screen-scan">
+  <button class="back-btn" onclick="goTo('model')">← رجوع</button>
+
+  <div class="hero-title">
+    <div class="pill">📷 امسح الجراب</div>
+    <h1>سكان باركود الجراب</h1>
+    <p>وجّه الكاميرا على الباركود الموجود على المنتج</p>
+  </div>
+
+  <div class="scanner-wrap">
+    <video id="scanner-video" autoplay playsinline muted></video>
+    <div class="scanner-overlay">
+      <div class="scan-frame">
+        <div class="corner2"></div>
+        <div class="scan-line"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scanner-hint">وجّه الكاميرا على الباركود — بيتعرف تلقائي</div>
+
+  <div class="or-divider">أو ادخل الكود يدوياً</div>
+
+  <div class="manual-input">
+    <input type="text" id="manual-code" placeholder="CASE-11-BLK" />
+    <button onclick="processCode(document.getElementById('manual-code').value)">بحث</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     SCREEN 3: النتيجة
+══════════════════════════════════ -->
+<div class="screen" id="screen-result">
+  <button class="back-btn" onclick="goTo('scan')">← امسح جراب تاني</button>
+
+  <!-- Product Card -->
+  <div class="product-card" id="product-card">
+    <div class="product-header">
+      <div>
+        <div class="product-title" id="res-title">—</div>
+        <div class="product-sku" id="res-sku">—</div>
+      </div>
+      <div class="product-price" id="res-price">—</div>
+    </div>
+
+    <!-- Tabs -->
+    <div style="padding: 16px 16px 0">
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('mockup', this)">📸 صورة واقعية</button>
+        <button class="tab-btn" onclick="switchTab('3d', this)">🌀 عرض 3D</button>
+      </div>
+    </div>
+
+    <!-- Mockup Tab -->
+    <div class="tab-content active" id="tab-mockup" style="padding: 20px 16px;">
+      <div class="mockup-view">
+        <div class="phone-mockup" id="phone-mockup">
+          <div class="phone-frame">
+            <div class="phone-body">
+              <!-- Case overlay -->
+              <div class="case-overlay" id="case-overlay"></div>
+              <!-- Screen -->
+              <div class="phone-screen">
+                <div class="phone-screen-content">
+                  <div style="font-size:24px;margin-bottom:4px;">📱</div>
+                  <div>آيفون</div>
+                </div>
+              </div>
+              <!-- Dynamic island / notch -->
+              <div class="phone-notch" id="phone-notch"></div>
+              <!-- Camera -->
+              <div class="camera-module" id="camera-module">
+                <div class="camera-lens"></div>
+                <div class="camera-lens"></div>
+                <div class="camera-lens"></div>
+                <div class="camera-lens"></div>
+              </div>
+              <!-- Buttons -->
+              <div class="phone-btn-right"></div>
+              <div class="phone-btn-left1"></div>
+              <div class="phone-btn-left2"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3D Tab -->
+    <div class="tab-content" id="tab-3d" style="padding: 0 16px 16px;">
+      <canvas id="three-canvas"></canvas>
+      <div style="text-align:center;font-size:12px;color:var(--muted);margin-top:8px;">
+        اسحب لتدوير الموبايل 🔄
+      </div>
+    </div>
+  </div>
+
+  <!-- Info Rows -->
+  <div class="info-row">
+    <div class="info-icon">📱</div>
+    <div>
+      <div class="info-label">متوافق مع</div>
+      <div class="info-val" id="res-compat">—</div>
+    </div>
+  </div>
+
+  <div class="info-row">
+    <div class="info-icon">🎨</div>
+    <div>
+      <div class="info-label">اللون</div>
+      <div class="info-val" id="res-color">—</div>
+    </div>
+  </div>
+
+  <div class="info-row">
+    <div class="info-icon">✅</div>
+    <div>
+      <div class="info-label">الحالة</div>
+      <div class="info-val" style="color:var(--success)">متوفر في المتجر</div>
+    </div>
+  </div>
+
+  <button class="cart-btn" onclick="addToCart()">🛒 أضف للسلة</button>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- IN-APP BROWSER WARNING -->
+<div id="inapp-screen">
+  <div class="inapp-icon">🔒</div>
+  <div class="inapp-title">افتح في Safari<br>عشان الكاميرا تشتغل</div>
+  <div class="inapp-desc">
+    الصفحة دي محتاجة إذن الكاميرا، وده مش بيشتغل جوه تطبيقات زي Instagram أو Facebook
+  </div>
+
+  <div class="inapp-steps">
+    <div style="font-size:14px;font-weight:700;margin-bottom:4px;">كيف تفتحها في Safari؟</div>
+    <div class="inapp-step">
+      <div class="inapp-step-num">1</div>
+      <div class="inapp-step-text">
+        <strong>افتح الـ menu</strong>
+        <span>اضغط على ··· أو السهم ↗ في الأعلى</span>
+      </div>
+    </div>
+    <div class="inapp-step">
+      <div class="inapp-step-num">2</div>
+      <div class="inapp-step-text">
+        <strong>اختار "Open in Safari"</strong>
+        <span>أو "افتح في Safari"</span>
+      </div>
+    </div>
+    <div class="inapp-step">
+      <div class="inapp-step-num">3</div>
+      <div class="inapp-step-text">
+        <strong>اسمح بالكاميرا</strong>
+        <span>اضغط "Allow" لما يسألك</span>
+      </div>
+    </div>
+  </div>
+
+  <button class="copy-url-btn" onclick="copyUrl()">
+    <span>📋</span> انسخ الرابط
+  </button>
+
+  <div class="safari-badge">
+    <span class="safari-icon">🧭</span>
+    <span>أو افتح الرابط ده في Safari:<br><strong style="color:var(--text);" id="url-display">—</strong></span>
+  </div>
+</div>
+
+
+
+<!-- Three.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://raw.githubusercontent.com/mrdoob/three.js/r128/examples/js/loaders/GLTFLoader.js"></script>
+
+<!-- ZXing Barcode Scanner -->
+<script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.18.6/umd/index.min.js"></script>
+
+<script>
+// ══════════════════════════════════════════════
+// CONFIG — استبدل بداتا حقيقية من Shopify لاحقاً
+// ══════════════════════════════════════════════
+
+const SHOPIFY_DOMAIN = 'teamstore.co';
+const SHOPIFY_TOKEN  = 'YOUR_STOREFRONT_ACCESS_TOKEN'; // ← ضيفه لاحقاً
+
+const IPHONE_MODELS = [
+  { id: 'iphone-11',        name: 'iPhone 11',        sub: '6.1"',   icon: '📱', lenses: 2 },
+  { id: 'iphone-12',        name: 'iPhone 12',        sub: '6.1"',   icon: '📱', lenses: 2 },
+  { id: 'iphone-13',        name: 'iPhone 13',        sub: '6.1"',   icon: '📱', lenses: 2 },
+  { id: 'iphone-14',        name: 'iPhone 14',        sub: '6.1"',   icon: '📱', lenses: 2 },
+  { id: 'iphone-15',        name: 'iPhone 15',        sub: '6.1"',   icon: '📱', lenses: 2 },
+  { id: 'iphone-16',        name: 'iPhone 16',        sub: '6.1"',   icon: '📱', lenses: 2 },
+  { id: 'iphone-14-pro',    name: 'iPhone 14 Pro',    sub: '6.1" Pro', icon: '📱', lenses: 3 },
+  { id: 'iphone-15-pro',    name: 'iPhone 15 Pro',    sub: '6.1" Pro', icon: '📱', lenses: 3 },
+  { id: 'iphone-16-pro',    name: 'iPhone 16 Pro',    sub: '6.1" Pro', icon: '📱', lenses: 3 },
+  { id: 'iphone-15-pro-max',name: 'iPhone 15 Pro Max',sub: '6.7" Pro', icon: '📱', lenses: 3 },
+  { id: 'iphone-16-pro-max',name: 'iPhone 16 Pro Max',sub: '6.7" Pro', icon: '📱', lenses: 3 },
+  { id: 'iphone-14-plus',   name: 'iPhone 14 Plus',   sub: '6.7"',   icon: '📱', lenses: 2 },
+];
+
+// ── DEMO PRODUCTS (سيُستبدل بـ Shopify API) ──
+const DEMO_PRODUCTS = {
+  'CASE-15PM-CLR': {
+    title: 'جراب كريستال شفاف',
+    sku: 'CASE-15PM-CLR',
+    price: '149 جنيه',
+    color: 'شفاف / كريستال',
+    compat: 'iPhone 15 Pro Max',
+    image: 'https://miamicenters.com/wp-content/uploads/2025/09/2.png',
+    inStock: true,
+  },
+  'CASE-15-BLK': {
+    title: 'جراب سيليكون أسود',
+    sku: 'CASE-15-BLK',
+    price: '129 جنيه',
+    color: 'أسود',
+    compat: 'iPhone 15',
+    image: 'https://miamicenters.com/wp-content/uploads/2025/09/2.png',
+    inStock: true,
+  },
+};
+
+// ══════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════
+let selectedModel   = null;
+let codeReader      = null;
+let scanActive      = false;
+let currentProduct  = null;
+let threeInit       = false;
+let threeScene, threeCamera, threeRenderer, threePhone;
+
+// ══════════════════════════════════════════════
+// BUILD MODEL GRID
+// ══════════════════════════════════════════════
+function buildModelGrid() {
+  const grid = document.getElementById('model-grid');
+  grid.innerHTML = IPHONE_MODELS.map(m => `
+    <button class="model-btn" onclick="selectModel('${m.id}')" id="model-${m.id}">
+      <span class="model-icon">${m.icon}</span>
+      <span class="model-name">${m.name}</span>
+      <span class="model-sub">${m.sub}</span>
+    </button>
+  `).join('');
+}
+
+function selectModel(id) {
+  selectedModel = IPHONE_MODELS.find(m => m.id === id);
+  document.querySelectorAll('.model-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('model-' + id).classList.add('selected');
+  document.getElementById('btn-go-scan').disabled = false;
+}
+
+// ══════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════
+function goTo(screen) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + screen).classList.add('active');
+
+  const steps = { model: '1', scan: '2', result: '3' };
+  document.getElementById('step-badge').innerHTML = `خطوة <strong>${steps[screen]}</strong> من 3`;
+
+  if (screen === 'scan') startScanner();
+  else stopScanner();
+}
+
+function goToScan() { goTo('scan'); }
+
+// ══════════════════════════════════════════════
+// BARCODE SCANNER
+// ══════════════════════════════════════════════
+async function startScanner() {
+  if (scanActive) return;
+
+  try {
+    const ZXing = window.ZXing || window['@zxing/library'];
+    if (!ZXing) {
+      // fallback: no ZXing loaded, manual only
+      console.warn('ZXing not loaded, manual mode only');
+      return;
+    }
+
+    codeReader = new ZXing.BrowserMultiFormatReader();
+    const videoEl = document.getElementById('scanner-video');
+
+    await codeReader.decodeFromConstraints(
+      { video: { facingMode: 'environment' } },
+      videoEl,
+      (result, err) => {
+        if (result) {
+          scanActive = false;
+          processCode(result.getText());
+        }
+      }
+    );
+
+    scanActive = true;
+  } catch (e) {
+    console.error('Scanner error:', e);
+    showToast('تعذّر تشغيل الكاميرا — استخدم الإدخال اليدوي', true);
+  }
+}
+
+function stopScanner() {
+  if (codeReader) {
+    codeReader.reset();
+    codeReader = null;
+  }
+  scanActive = false;
+}
+
+// ══════════════════════════════════════════════
+// PROCESS CODE → FETCH PRODUCT
+// ══════════════════════════════════════════════
+async function processCode(code) {
+  if (!code) return;
+  code = code.trim().toUpperCase();
+
+  stopScanner();
+  goTo('result');
+  showLoadingInResult();
+
+  // Try demo first, then Shopify
+  let product = DEMO_PRODUCTS[code];
+
+  if (!product && SHOPIFY_TOKEN !== 'YOUR_STOREFRONT_ACCESS_TOKEN') {
+    product = await fetchFromShopify(code);
+  }
+
+  if (!product) {
+    // Not found — show demo product anyway
+    product = {
+      title: `جراب كريستال شفاف`,
+      sku: code,
+      price: '149 جنيه',
+      color: 'شفاف / كريستال',
+      compat: selectedModel ? selectedModel.name : 'آيفون',
+      image: 'https://miamicenters.com/wp-content/uploads/2025/09/2.png',
+      inStock: true,
+    };
+    showToast('⚠️ عرض تجريبي — الكود غير مُعرّف بعد');
+  }
+
+  currentProduct = product;
+  renderResult(product);
+  build3DScene(product.image);
+}
+
+async function fetchFromShopify(sku) {
+  try {
+    const query = `{
+      products(first: 1, query: "sku:${sku}") {
+        edges { node {
+          title
+          variants(first: 1) { edges { node {
+            sku
+            price { amount currencyCode }
+            image { url }
+          }}}
+          images(first: 1) { edges { node { url } }}
+        }}
+      }
+    }`;
+
+    const res = await fetch(`https://${SHOPIFY_DOMAIN}/api/2024-01/graphql.json`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Shopify-Storefront-Access-Token': SHOPIFY_TOKEN,
+      },
+      body: JSON.stringify({ query }),
+    });
+
+    const data = await res.json();
+    const node = data?.data?.products?.edges?.[0]?.node;
+    if (!node) return null;
+
+    const variant = node.variants.edges[0]?.node;
+    return {
+      title: node.title,
+      sku: variant?.sku || sku,
+      price: variant ? `${Math.round(variant.price.amount)} جنيه` : '—',
+      color: 'متعدد',
+      compat: selectedModel?.name || 'آيفون',
+      image: variant?.image?.url || node.images?.edges?.[0]?.node?.url || '',
+      inStock: true,
+    };
+  } catch (e) {
+    return null;
+  }
+}
+
+function showLoadingInResult() {
+  document.getElementById('res-title').textContent = '...';
+  document.getElementById('res-price').textContent = '...';
+  document.getElementById('res-sku').textContent = '...';
+}
+
+// ══════════════════════════════════════════════
+// RENDER RESULT
+// ══════════════════════════════════════════════
+function renderResult(product) {
+  document.getElementById('res-title').textContent  = product.title;
+  document.getElementById('res-price').textContent  = product.price;
+  document.getElementById('res-sku').textContent    = `كود: ${product.sku}`;
+  document.getElementById('res-compat').textContent = product.compat;
+  document.getElementById('res-color').textContent  = product.color;
+
+  // Update phone mockup
+  applyPhoneModel();
+
+  // Apply case texture to mockup
+  const overlay = document.getElementById('case-overlay');
+  if (product.image) {
+    overlay.style.setProperty('--case-img', `url(${product.image})`);
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => overlay.classList.add('loaded');
+    img.onerror = () => {
+      // fallback color tint
+      overlay.style.background = 'rgba(108,99,255,.15)';
+      overlay.style.border = '3px solid rgba(108,99,255,.3)';
+      overlay.classList.add('loaded');
+    };
+    img.src = product.image;
+  }
+}
+
+function applyPhoneModel() {
+  if (!selectedModel) return;
+  const module = document.getElementById('camera-module');
+  const hasPro = selectedModel.lenses >= 3;
+
+  if (hasPro) {
+    module.style.display = 'grid';
+    module.style.gridTemplateColumns = '1fr 1fr';
+    module.innerHTML = `
+      <div class="camera-lens"></div>
+      <div class="camera-lens"></div>
+      <div class="camera-lens"></div>
+      <div style="background:linear-gradient(135deg,#1a1a1a,#333);border-radius:50%;border:1px solid #444;"></div>
+    `;
+  } else {
+    module.style.gridTemplateColumns = '1fr 1fr';
+    module.innerHTML = `
+      <div class="camera-lens"></div>
+      <div class="camera-lens"></div>
+      <div style="background:transparent"></div>
+      <div style="background:transparent"></div>
+    `;
+  }
+}
+
+// ══════════════════════════════════════════════
+// TABS
+// ══════════════════════════════════════════════
+function switchTab(tab, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+
+  if (tab === '3d' && !threeInit) {
+    build3DScene(currentProduct?.image || '');
+  }
+}
+
+// ══════════════════════════════════════════════
+// THREE.JS 3D PHONE
+// ══════════════════════════════════════════════
+function build3DScene(caseImageUrl) {
+  if (threeInit) {
+    // Update texture only
+    updateCaseTexture(caseImageUrl);
+    return;
+  }
+
+  threeInit = true;
+  const canvas = document.getElementById('three-canvas');
+
+  threeScene    = new THREE.Scene();
+  threeCamera   = new THREE.PerspectiveCamera(45, canvas.clientWidth / canvas.clientHeight, 0.1, 100);
+  threeCamera.position.set(0, 0, 3.5);
+
+  threeRenderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  threeRenderer.setSize(canvas.clientWidth, canvas.clientHeight);
+  threeRenderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  threeRenderer.shadowMap.enabled = true;
+
+  // Lights
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+  threeScene.add(ambientLight);
+
+  const keyLight = new THREE.DirectionalLight(0xffffff, 1.2);
+  keyLight.position.set(2, 3, 4);
+  threeScene.add(keyLight);
+
+  const rimLight = new THREE.DirectionalLight(0x6c63ff, 0.8);
+  rimLight.position.set(-3, -1, -2);
+  threeScene.add(rimLight);
+
+  // Build phone geometry
+  buildPhoneGeometry(caseImageUrl);
+
+  // Drag to rotate
+  let isDragging = false, prevX = 0, prevY = 0;
+  let rotX = 0, rotY = 0, velX = 0, velY = 0;
+
+  canvas.addEventListener('mousedown',  e => { isDragging = true; prevX = e.clientX; prevY = e.clientY; });
+  canvas.addEventListener('touchstart', e => { isDragging = true; prevX = e.touches[0].clientX; prevY = e.touches[0].clientY; });
+
+  window.addEventListener('mouseup',  () => isDragging = false);
+  window.addEventListener('touchend', () => isDragging = false);
+
+  canvas.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    velY += (e.clientX - prevX) * 0.01;
+    velX += (e.clientY - prevY) * 0.01;
+    prevX = e.clientX; prevY = e.clientY;
+  });
+
+  canvas.addEventListener('touchmove', e => {
+    if (!isDragging) return;
+    velY += (e.touches[0].clientX - prevX) * 0.01;
+    velX += (e.touches[0].clientY - prevY) * 0.01;
+    prevX = e.touches[0].clientX; prevY = e.touches[0].clientY;
+  });
+
+  const animate = () => {
+    requestAnimationFrame(animate);
+
+    if (!isDragging) {
+      velY *= 0.95;
+      velX *= 0.95;
+      if (Math.abs(velX) < 0.0001 && Math.abs(velY) < 0.0001) {
+        // Auto-rotate slowly when idle
+        threePhone && (threePhone.rotation.y += 0.005);
+      }
+    }
+
+    rotY += velY;
+    rotX += velX;
+    rotX = Math.max(-Math.PI/4, Math.min(Math.PI/4, rotX));
+
+    if (threePhone) {
+      threePhone.rotation.x += (rotX - threePhone.rotation.x) * 0.1;
+      threePhone.rotation.y += velY;
+    }
+
+    threeRenderer.render(threeScene, threeCamera);
+  };
+
+  animate();
+}
+
+function buildPhoneGeometry(caseImageUrl) {
+  const group = new THREE.Group();
+
+  // ── Phone body ──
+  const bodyGeo = new THREE.BoxGeometry(0.75, 1.6, 0.08, 1, 1, 1);
+  const bodyMat = new THREE.MeshStandardMaterial({
+    color: 0x1c1c1e,
+    metalness: 0.9,
+    roughness: 0.1,
+  });
+  const body = new THREE.Mesh(bodyGeo, bodyMat);
+  group.add(body);
+
+  // ── Screen ──
+  const screenGeo = new THREE.PlaneGeometry(0.65, 1.4);
+  const screenMat = new THREE.MeshStandardMaterial({
+    color: 0x1a1a2e,
+    emissive: 0x101025,
+    emissiveIntensity: 0.5,
+  });
+  const screen = new THREE.Mesh(screenGeo, screenMat);
+  screen.position.z = 0.045;
+  group.add(screen);
+
+  // ── Camera bump ──
+  const cameraGeo = new THREE.BoxGeometry(0.22, 0.22, 0.015);
+  const cameraMat = new THREE.MeshStandardMaterial({
+    color: 0x0a0a0a,
+    metalness: 0.8,
+    roughness: 0.2,
+  });
+  const cameraBump = new THREE.Mesh(cameraGeo, cameraMat);
+  cameraBump.position.set(0.2, 0.5, 0.048);
+  group.add(cameraBump);
+
+  // Camera lenses
+  const lensGeo = new THREE.CircleGeometry(0.04, 16);
+  const lensMat = new THREE.MeshStandardMaterial({ color: 0x050510, metalness: 0.5 });
+
+  const lensPositions = selectedModel?.lenses >= 3
+    ? [[-0.04, 0.55], [0.04, 0.55], [-0.04, 0.47], [0.04, 0.47]]
+    : [[-0.04, 0.52], [0.04, 0.52]];
+
+  lensPositions.forEach(([x, y]) => {
+    const lens = new THREE.Mesh(lensGeo, lensMat);
+    lens.position.set(x + 0.2, y, 0.056);
+    group.add(lens);
+  });
+
+  // ── Case overlay ──
+  const caseGeo = new THREE.BoxGeometry(0.79, 1.64, 0.09);
+
+  let caseMat;
+  if (caseImageUrl) {
+    const loader = new THREE.TextureLoader();
+    loader.crossOrigin = 'anonymous';
+    loader.load(
+      caseImageUrl,
+      tex => {
+        caseMat.map = tex;
+        caseMat.needsUpdate = true;
+      },
+      undefined,
+      () => {
+        caseMat.color = new THREE.Color(0x6c63ff);
+        caseMat.opacity = 0.25;
+        caseMat.needsUpdate = true;
+      }
+    );
+  }
+
+  caseMat = new THREE.MeshStandardMaterial({
+    color: 0xffffff,
+    transparent: true,
+    opacity: 0.9,
+    metalness: 0.0,
+    roughness: 0.8,
+    side: THREE.FrontSide,
+  });
+
+  const caseMesh = new THREE.Mesh(caseGeo, caseMat);
+  caseMesh.position.z = -0.005;
+  group.add(caseMesh);
+
+  group.rotation.x = 0.1;
+  group.rotation.y = -0.3;
+
+  threeScene.add(group);
+  threePhone = group;
+}
+
+function updateCaseTexture(url) {
+  if (!url || !threePhone) return;
+  // Texture update handled in buildPhoneGeometry
+}
+
+// ══════════════════════════════════════════════
+// ADD TO CART
+// ══════════════════════════════════════════════
+function addToCart() {
+  showToast('✅ تم الإضافة للسلة!');
+  // TODO: Shopify AJAX cart add
+}
+
+// ══════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════
+function showToast(msg, isError = false) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show' + (isError ? ' error' : '');
+  setTimeout(() => el.className = 'toast', 3000);
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+buildModelGrid();
+
+// Demo: simulate barcode scan after 3 seconds on scan screen (for testing)
+// Remove this in production
+
+// ══════════════════════════════════════════════
+// IN-APP BROWSER DETECTION
+// ══════════════════════════════════════════════
+function isInAppBrowser() {
+  const ua = navigator.userAgent || '';
+  return (
+    /Instagram/.test(ua) ||
+    /FBAN|FBAV/.test(ua) ||
+    /Twitter/.test(ua) ||
+    /TikTok/.test(ua) ||
+    /Snapchat/.test(ua) ||
+    /Line\//.test(ua) ||
+    /WhatsApp/.test(ua) ||
+    (!/Safari/.test(ua) && /iPhone|iPad|iPod/.test(ua) && !/Chrome/.test(ua))
+  );
+}
+
+function showInAppWarning() {
+  document.getElementById('inapp-screen').classList.add('show');
+  const urlEl = document.getElementById('url-display');
+  if (urlEl) urlEl.textContent = location.href;
+}
+
+function copyUrl() {
+  const url = location.href;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(() => showToast('✅ تم نسخ الرابط!'));
+  } else {
+    const ta = document.createElement('textarea');
+    ta.value = url;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    ta.remove();
+    showToast('✅ تم نسخ الرابط!');
+  }
+}
+
+// Check on load
+if (isInAppBrowser()) {
+  showInAppWarning();
+}
+
+</script>
+</body>
+</html>
