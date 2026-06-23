@@ -4,1272 +4,687 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Team Store – Case Preview</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=SF+Pro+Display:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
 <style>
-/* ═══════════════════════════════════════════
-   TOKENS
-═══════════════════════════════════════════ */
 :root {
-  --ink-0: #ffffff;
-  --ink-1: #e8e8f0;
-  --ink-2: #a0a0c0;
-  --ink-3: #5a5a7a;
-  --bg-0:  #07070e;
-  --bg-1:  #0f0f1a;
-  --bg-2:  #161625;
-  --bg-3:  #1e1e30;
-  --accent: #7c6fff;
-  --accent-dim: rgba(124,111,255,.12);
-  --accent-glow: rgba(124,111,255,.35);
-  --gold: #f0a500;
-  --gold-dim: rgba(240,165,0,.1);
-  --green: #00d68f;
-  --red: #ff4d6a;
-  --radius-sm: 10px;
-  --radius-md: 16px;
-  --radius-lg: 24px;
-  --radius-xl: 32px;
+  --bg0:#07070e; --bg1:#0f0f1a; --bg2:#161625; --bg3:#1e1e30;
+  --ink0:#ffffff; --ink1:#e8e8f0; --ink2:#a0a0c0; --ink3:#5a5a7a;
+  --accent:#7c6fff; --adim:rgba(124,111,255,.12); --aglow:rgba(124,111,255,.3);
+  --gold:#f0a500; --green:#00d68f; --red:#ff4d6a;
+  --r-sm:10px; --r-md:16px; --r-lg:24px;
 }
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Cairo',sans-serif;background:var(--bg0);color:var(--ink1)}
 
-* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+.amb{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 70% 50% at 15% 0%,rgba(124,111,255,.13) 0%,transparent 65%),
+             radial-gradient(ellipse 50% 35% at 85% 100%,rgba(124,111,255,.07) 0%,transparent 60%)}
 
-html, body {
-  height: 100%;
-  overflow: hidden;
-}
+.app{position:relative;z-index:1;height:100dvh;display:flex;flex-direction:column;max-width:430px;margin:0 auto}
 
-body {
-  font-family: 'Cairo', sans-serif;
-  background: var(--bg-0);
-  color: var(--ink-1);
-  overscroll-behavior: none;
-}
+/* HEADER */
+.hdr{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;
+  padding:15px 20px 13px;border-bottom:1px solid rgba(255,255,255,.05)}
+.logo{font-size:17px;font-weight:900;letter-spacing:.5px;color:var(--ink0)}
+.logo em{font-style:normal;color:var(--accent)}
+.step-pill{background:var(--bg2);border:1px solid rgba(255,255,255,.06);
+  border-radius:50px;padding:4px 12px;font-size:12px;color:var(--ink3)}
+.step-pill b{color:var(--accent)}
 
-/* ═══════════════════════════════════════════
-   AMBIENT
-═══════════════════════════════════════════ */
-.ambient {
-  position: fixed; inset: 0; z-index: 0; pointer-events: none;
-  background:
-    radial-gradient(ellipse 70% 50% at 15% 0%, rgba(124,111,255,.14) 0%, transparent 65%),
-    radial-gradient(ellipse 50% 35% at 85% 100%, rgba(124,111,255,.08) 0%, transparent 60%);
-}
+/* SCREENS */
+.screens{flex:1;overflow:hidden;position:relative}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;
+  padding:0 16px 16px;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;
+  opacity:0;pointer-events:none;transform:translateX(28px);
+  transition:opacity .25s cubic-bezier(.4,0,.2,1),transform .25s cubic-bezier(.4,0,.2,1)}
+.screen.active{opacity:1;pointer-events:auto;transform:translateX(0)}
+.screen.exit{opacity:0;transform:translateX(-28px)}
 
-/* ═══════════════════════════════════════════
-   LAYOUT
-═══════════════════════════════════════════ */
-.app {
-  position: relative; z-index: 1;
-  height: 100dvh;
-  display: flex; flex-direction: column;
-  max-width: 430px; margin: 0 auto;
-}
+/* SHARED */
+.eyebrow{display:inline-flex;align-items:center;gap:5px;
+  background:var(--adim);border:1px solid rgba(124,111,255,.2);
+  border-radius:50px;padding:3px 11px;font-size:11px;font-weight:600;color:var(--accent);margin-bottom:10px}
+.back-btn{display:inline-flex;align-items:center;gap:4px;background:none;border:none;
+  font-family:'Cairo',sans-serif;font-size:13px;color:var(--ink3);cursor:pointer;padding:14px 0 6px;transition:.15s}
+.cta{width:100%;padding:15px;background:linear-gradient(135deg,var(--accent),#a78bfa);
+  border:none;border-radius:var(--r-md);font-family:'Cairo',sans-serif;font-size:16px;font-weight:700;
+  color:#fff;cursor:pointer;box-shadow:0 8px 28px var(--aglow);transition:.18s;flex-shrink:0}
+.cta:disabled{opacity:.3;cursor:not-allowed}
+.cta:active{transform:scale(.97)}
 
-/* ── Header ── */
-.header {
-  flex-shrink: 0;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 16px 20px 14px;
-  border-bottom: 1px solid rgba(255,255,255,.05);
-}
+/* SCREEN 1 - MODEL */
+.s1-hero{padding:22px 0 16px;text-align:center}
+.s1-hero h1{font-size:24px;font-weight:900;color:var(--ink0);margin-bottom:5px}
+.s1-hero p{font-size:13px;color:var(--ink3);line-height:1.6}
+.series-tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;margin-bottom:10px;scrollbar-width:none}
+.series-tabs::-webkit-scrollbar{display:none}
+.stab{flex-shrink:0;background:var(--bg2);border:1px solid rgba(255,255,255,.06);
+  border-radius:50px;padding:6px 14px;font-family:'Cairo',sans-serif;font-size:12px;font-weight:600;
+  color:var(--ink3);cursor:pointer;transition:.15s;white-space:nowrap}
+.stab.on{background:var(--adim);border-color:rgba(124,111,255,.3);color:var(--accent)}
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.mcard{background:var(--bg2);border:1.5px solid rgba(255,255,255,.05);border-radius:var(--r-md);
+  padding:14px 10px 12px;cursor:pointer;transition:.18s;text-align:center;
+  display:flex;flex-direction:column;align-items:center;gap:6px}
+.mcard:active{transform:scale(.94)}
+.mcard.on{border-color:var(--accent);background:var(--adim);
+  box-shadow:0 0 0 1px rgba(124,111,255,.25),0 6px 20px rgba(124,111,255,.12)}
+.mcard-svg{width:30px;height:50px}
+.mcard-name{font-size:12px;font-weight:700;color:var(--ink1);line-height:1.2}
+.mcard-sub{font-size:10px;color:var(--ink3)}
 
-.logo {
-  font-size: 17px; font-weight: 900; letter-spacing: .5px;
-  color: var(--ink-0);
-}
-.logo em { font-style:normal; color: var(--accent); }
+/* SCREEN 2 - SCAN */
+.s2-top{text-align:center;padding:0 0 12px}
+.s2-top h2{font-size:19px;font-weight:900;color:var(--ink0);margin-top:5px}
+.s2-top p{font-size:12px;color:var(--ink3);margin-top:3px}
+.scan-box{width:100%;aspect-ratio:1;border-radius:var(--r-lg);overflow:hidden;
+  position:relative;background:#000;flex-shrink:0}
+#scan-vid{width:100%;height:100%;object-fit:cover;display:block}
+.scan-ui{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.scan-frame{width:58%;aspect-ratio:1;position:relative}
+.scan-frame::before,.scan-frame::after,.scan-frame span::before,.scan-frame span::after{
+  content:'';position:absolute;width:20px;height:20px;border-style:solid;border-color:var(--accent)}
+.scan-frame::before{top:0;right:0;border-width:2px 2px 0 0;border-radius:0 6px 0 0}
+.scan-frame::after{bottom:0;right:0;border-width:0 2px 2px 0;border-radius:0 0 6px 0}
+.scan-frame span::before{top:0;left:0;border-width:2px 0 0 2px;border-radius:6px 0 0 0}
+.scan-frame span::after{bottom:0;left:0;border-width:0 0 2px 2px;border-radius:0 0 0 6px}
+.scan-beam{position:absolute;left:8%;right:8%;height:1.5px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);
+  animation:beam 1.8s ease-in-out infinite}
+@keyframes beam{0%{top:8%;opacity:0}8%{opacity:1}92%{opacity:1}100%{top:92%;opacity:0}}
+.scan-hint{text-align:center;font-size:12px;color:var(--ink3);padding:10px 0 2px;flex-shrink:0}
+.divider{display:flex;align-items:center;gap:10px;color:var(--ink3);font-size:11px;
+  padding:4px 0;flex-shrink:0}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.05)}
+.manual-row{display:flex;gap:7px;flex-shrink:0}
+.manual-row input{flex:1;background:var(--bg2);border:1.5px solid rgba(255,255,255,.07);
+  border-radius:var(--r-sm);padding:12px 13px;font-family:'Cairo',sans-serif;font-size:14px;
+  color:var(--ink0);outline:none;direction:ltr;transition:border-color .2s}
+.manual-row input:focus{border-color:var(--accent)}
+.manual-row input::placeholder{color:var(--ink3)}
+.manual-row button{background:var(--accent);border:none;border-radius:var(--r-sm);
+  padding:12px 16px;font-family:'Cairo',sans-serif;font-size:14px;font-weight:700;
+  color:#fff;cursor:pointer;transition:.15s;white-space:nowrap}
+.manual-row button:active{opacity:.8}
 
-.step-pill {
-  display: flex; align-items: center; gap: 6px;
-  background: var(--bg-2); border: 1px solid rgba(255,255,255,.06);
-  border-radius: 50px; padding: 5px 12px;
-  font-size: 12px; color: var(--ink-3);
-}
-.step-pill b { color: var(--accent); }
+/* SCREEN 3 - RESULT */
+.r-hdr{padding:6px 0 14px;display:flex;justify-content:space-between;align-items:flex-start}
+.r-name{font-size:19px;font-weight:900;color:var(--ink0)}
+.r-sku{font-size:11px;color:var(--ink3);margin-top:2px}
+.r-price{font-size:21px;font-weight:900;color:var(--gold);white-space:nowrap}
+.vtabs{display:flex;gap:0;background:var(--bg2);border:1px solid rgba(255,255,255,.05);
+  border-radius:var(--r-sm);padding:3px;margin-bottom:10px;flex-shrink:0}
+.vtab{flex:1;padding:9px 6px;background:none;border:none;border-radius:7px;
+  font-family:'Cairo',sans-serif;font-size:12px;font-weight:600;color:var(--ink3);cursor:pointer;transition:.15s}
+.vtab.on{background:var(--bg0);color:var(--ink1);box-shadow:0 1px 5px rgba(0,0,0,.4)}
+.tpanel{display:none}
+.tpanel.on{display:block}
 
-/* ── Screens ── */
-.screens { flex: 1; overflow: hidden; position: relative; }
+/* MOCKUP */
+.mockup-stage{display:flex;align-items:center;justify-content:center;
+  min-height:320px;padding:8px 0 12px}
+.phone-wrap{position:relative;width:170px}
+.phone-wrap svg{width:100%;display:block;
+  filter:drop-shadow(0 24px 48px rgba(0,0,0,.75)) drop-shadow(0 6px 16px rgba(124,111,255,.12))}
+.case-canvas{position:absolute;inset:0;border-radius:21%;opacity:0;
+  transition:opacity .45s cubic-bezier(.4,0,.2,1)}
+.case-canvas.show{opacity:1}
 
-.screen {
-  position: absolute; inset: 0;
-  display: flex; flex-direction: column;
-  padding: 0 16px 16px;
-  overflow-y: auto; overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
-  opacity: 0; pointer-events: none;
-  transform: translateX(30px);
-  transition: opacity .28s cubic-bezier(.4,0,.2,1), transform .28s cubic-bezier(.4,0,.2,1);
-}
+/* 3D */
+#c3d{width:100%;height:350px;border-radius:var(--r-md);display:block;cursor:grab;background:transparent}
+#c3d:active{cursor:grabbing}
+.drag-hint{text-align:center;font-size:11px;color:var(--ink3);margin:5px 0 8px}
 
-.screen.active {
-  opacity: 1; pointer-events: auto; transform: translateX(0);
-}
+/* CHIPS */
+.chips{display:flex;flex-direction:column;gap:5px;margin-bottom:10px}
+.chip{display:flex;align-items:center;gap:10px;background:var(--bg2);
+  border:1px solid rgba(255,255,255,.04);border-radius:var(--r-sm);padding:10px 13px}
+.chip-ic{width:32px;height:32px;border-radius:7px;background:var(--bg3);
+  display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.chip-lbl{font-size:10px;color:var(--ink3)}
+.chip-val{font-size:13px;font-weight:700;color:var(--ink1)}
+.cart-btn{width:100%;padding:15px;
+  background:linear-gradient(135deg,var(--gold),#f97316);
+  border:none;border-radius:var(--r-md);font-family:'Cairo',sans-serif;font-size:16px;font-weight:900;
+  color:#000;cursor:pointer;box-shadow:0 8px 24px rgba(240,165,0,.28);transition:.18s;flex-shrink:0}
+.cart-btn:active{transform:scale(.97)}
 
-.screen.exit {
-  opacity: 0; transform: translateX(-30px);
-}
+/* IN-APP WALL */
+#iaw{display:none;position:fixed;inset:0;z-index:9999;background:var(--bg0);
+  flex-direction:column;align-items:center;justify-content:center;padding:28px 20px;gap:16px;text-align:center}
+#iaw.show{display:flex}
+.iaw-icon{font-size:52px}
+.iaw-title{font-size:21px;font-weight:900;color:var(--ink0);line-height:1.25}
+.iaw-sub{font-size:13px;color:var(--ink3);line-height:1.65;max-width:280px}
+.iaw-steps{background:var(--bg2);border:1px solid rgba(255,255,255,.05);border-radius:var(--r-lg);
+  padding:16px;width:100%;max-width:320px;display:flex;flex-direction:column;gap:10px;text-align:right}
+.iaw-step{display:flex;align-items:flex-start;gap:9px}
+.iaw-n{width:24px;height:24px;border-radius:50%;background:var(--accent);font-size:11px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff}
+.iaw-st strong{display:block;font-size:12px;color:var(--ink1);margin-bottom:1px}
+.iaw-st span{font-size:11px;color:var(--ink3)}
+.copy-btn{width:100%;max-width:320px;padding:13px;background:var(--bg2);
+  border:1.5px solid rgba(124,111,255,.3);border-radius:var(--r-md);
+  font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;color:var(--accent);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px}
 
-/* ═══════════════════════════════════════════
-   SCREEN 1 — MODEL SELECT
-═══════════════════════════════════════════ */
-.s1-hero {
-  padding: 24px 0 20px;
-  text-align: center;
-}
-
-.eyebrow {
-  display: inline-flex; align-items: center; gap: 6px;
-  background: var(--accent-dim); border: 1px solid rgba(124,111,255,.2);
-  border-radius: 50px; padding: 4px 12px;
-  font-size: 12px; font-weight: 600; color: var(--accent);
-  margin-bottom: 12px;
-}
-
-.s1-hero h1 {
-  font-size: 26px; font-weight: 900;
-  color: var(--ink-0); line-height: 1.2;
-  margin-bottom: 6px;
-}
-
-.s1-hero p { font-size: 14px; color: var(--ink-3); line-height: 1.6; }
-
-/* Model series tabs */
-.series-tabs {
-  display: flex; gap: 6px;
-  overflow-x: auto; padding-bottom: 2px;
-  margin-bottom: 12px;
-  scrollbar-width: none;
-}
-.series-tabs::-webkit-scrollbar { display:none; }
-
-.series-tab {
-  flex-shrink: 0;
-  background: var(--bg-2); border: 1px solid rgba(255,255,255,.06);
-  border-radius: 50px; padding: 6px 14px;
-  font-family: 'Cairo',sans-serif; font-size: 13px; font-weight: 600;
-  color: var(--ink-3); cursor: pointer; transition: .18s;
-  white-space: nowrap;
-}
-.series-tab.active {
-  background: var(--accent-dim); border-color: rgba(124,111,255,.3);
-  color: var(--accent);
-}
-
-/* Model grid */
-.model-grid {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 8px; margin-bottom: 16px;
-}
-
-.model-card {
-  background: var(--bg-2);
-  border: 1.5px solid rgba(255,255,255,.05);
-  border-radius: var(--radius-md);
-  padding: 14px 12px 12px;
-  cursor: pointer; transition: .2s;
-  text-align: center;
-  display: flex; flex-direction: column; align-items: center; gap: 8px;
-}
-.model-card:active { transform: scale(.95); }
-.model-card.selected {
-  border-color: var(--accent);
-  background: var(--accent-dim);
-  box-shadow: 0 0 0 1px rgba(124,111,255,.3), 0 6px 24px rgba(124,111,255,.15);
-}
-
-/* Mini phone SVG in card */
-.model-thumb { width: 32px; height: 52px; }
-
-.model-card-name {
-  font-size: 13px; font-weight: 700; color: var(--ink-1);
-  line-height: 1.2;
-}
-.model-card-sub {
-  font-size: 11px; color: var(--ink-3); margin-top: -4px;
-}
-
-/* CTA */
-.cta-btn {
-  width: 100%;
-  padding: 15px;
-  background: linear-gradient(135deg, var(--accent) 0%, #a78bfa 100%);
-  border: none; border-radius: var(--radius-md);
-  font-family: 'Cairo',sans-serif; font-size: 16px; font-weight: 700;
-  color: #fff; cursor: pointer;
-  box-shadow: 0 8px 28px var(--accent-glow);
-  transition: .2s; flex-shrink: 0;
-}
-.cta-btn:active { transform: scale(.97); }
-.cta-btn:disabled { opacity:.35; cursor:not-allowed; transform:none; }
-
-/* ═══════════════════════════════════════════
-   SCREEN 2 — SCANNER
-═══════════════════════════════════════════ */
-.back-btn {
-  display: inline-flex; align-items: center; gap: 4px;
-  background: none; border: none;
-  font-family:'Cairo',sans-serif; font-size:14px; color:var(--ink-3);
-  cursor:pointer; padding: 16px 0 8px;
-  transition: color .15s;
-}
-.back-btn:active { color: var(--ink-1); }
-
-.scanner-box {
-  width: 100%; aspect-ratio: 1;
-  border-radius: var(--radius-lg); overflow: hidden;
-  position: relative; background: #000;
-  flex-shrink: 0;
-}
-
-#scanner-video {
-  width: 100%; height: 100%; object-fit: cover; display: block;
-}
-
-.scan-ui {
-  position: absolute; inset: 0;
-  display: flex; align-items: center; justify-content: center;
-  pointer-events: none;
-}
-
-.scan-corners {
-  width: 60%; aspect-ratio: 1; position: relative;
-}
-
-.scan-corners::before, .scan-corners::after,
-.scan-corners span::before, .scan-corners span::after {
-  content: ''; position: absolute;
-  width: 22px; height: 22px;
-  border-style: solid; border-color: var(--accent);
-}
-.scan-corners::before { top:0; right:0; border-width:2.5px 2.5px 0 0; border-radius: 0 7px 0 0; }
-.scan-corners::after  { bottom:0; right:0; border-width:0 2.5px 2.5px 0; border-radius: 0 0 7px 0; }
-.scan-corners span::before { top:0; left:0; border-width:2.5px 0 0 2.5px; border-radius: 7px 0 0 0; }
-.scan-corners span::after  { bottom:0; left:0; border-width:0 0 2.5px 2.5px; border-radius: 0 0 0 7px; }
-
-.scan-beam {
-  position: absolute; left: 8%; right: 8%;
-  height: 1.5px;
-  background: linear-gradient(90deg,transparent,var(--accent),transparent);
-  animation: beam 1.8s ease-in-out infinite;
-}
-@keyframes beam {
-  0%   { top:8%; opacity:0; }
-  8%   { opacity:1; }
-  92%  { opacity:1; }
-  100% { top:92%; opacity:0; }
-}
-
-.scanner-hint {
-  text-align:center; font-size:13px; color:var(--ink-3);
-  padding: 12px 0 4px; line-height:1.5; flex-shrink:0;
-}
-
-.divider {
-  display:flex; align-items:center; gap:10px;
-  color:var(--ink-3); font-size:12px;
-  padding: 4px 0; flex-shrink:0;
-}
-.divider::before,.divider::after {
-  content:''; flex:1; height:1px; background:rgba(255,255,255,.06);
-}
-
-.manual-row {
-  display:flex; gap:8px; flex-shrink:0;
-}
-.manual-row input {
-  flex:1; background:var(--bg-2);
-  border:1.5px solid rgba(255,255,255,.07);
-  border-radius:var(--radius-sm); padding:12px 14px;
-  font-family:'Cairo',sans-serif; font-size:15px;
-  color:var(--ink-0); outline:none; direction:ltr;
-  transition: border-color .2s;
-}
-.manual-row input:focus { border-color: var(--accent); }
-.manual-row input::placeholder { color: var(--ink-3); }
-
-.manual-row button {
-  background:var(--accent); border:none;
-  border-radius:var(--radius-sm); padding:12px 18px;
-  font-family:'Cairo',sans-serif; font-size:15px; font-weight:700;
-  color:#fff; cursor:pointer; transition:.18s; white-space:nowrap;
-}
-.manual-row button:active { opacity:.8; }
-
-/* ═══════════════════════════════════════════
-   SCREEN 3 — RESULT
-═══════════════════════════════════════════ */
-.result-header {
-  padding: 8px 0 16px;
-  display:flex; justify-content:space-between; align-items:flex-start;
-}
-.result-name { font-size:20px; font-weight:900; color:var(--ink-0); }
-.result-sku  { font-size:12px; color:var(--ink-3); margin-top:2px; }
-.result-price {
-  font-size:22px; font-weight:900; color:var(--gold);
-  white-space:nowrap;
-}
-
-/* ── View tabs ── */
-.view-tabs {
-  display:flex; gap:0;
-  background:var(--bg-2); border:1px solid rgba(255,255,255,.05);
-  border-radius:var(--radius-sm); padding:3px;
-  margin-bottom:12px; flex-shrink:0;
-}
-.view-tab {
-  flex:1; padding:9px 8px;
-  background:none; border:none; border-radius:7px;
-  font-family:'Cairo',sans-serif; font-size:13px; font-weight:600;
-  color:var(--ink-3); cursor:pointer; transition:.18s;
-}
-.view-tab.active {
-  background:var(--bg-0);
-  color:var(--ink-1);
-  box-shadow:0 1px 6px rgba(0,0,0,.4);
-}
-
-.tab-panel { display:none; }
-.tab-panel.active { display:block; }
-
-/* ── MOCKUP ── */
-.mockup-stage {
-  display:flex; align-items:center; justify-content:center;
-  min-height: 340px; padding: 10px 0 16px;
-  position: relative;
-}
-
-/* Phone SVG wrapper */
-.phone-svg-wrap {
-  position: relative;
-  width: 180px;
-  filter: drop-shadow(0 30px 60px rgba(0,0,0,.7)) drop-shadow(0 8px 20px rgba(124,111,255,.15));
-}
-
-.phone-svg-wrap svg { width:100%; display:block; }
-
-/* Case overlay on top of phone SVG */
-.case-img-overlay {
-  position:absolute;
-  inset: 0;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  border-radius: 22%;
-  opacity: 0;
-  transition: opacity .5s cubic-bezier(.4,0,.2,1);
-  mix-blend-mode: multiply;
-}
-.case-img-overlay.show { opacity: 1; }
-
-/* ── 3D ── */
-#canvas3d {
-  width:100%; height:360px;
-  border-radius:var(--radius-md);
-  display:block; cursor:grab;
-}
-#canvas3d:active { cursor:grabbing; }
-
-.drag-hint {
-  text-align:center; font-size:12px; color:var(--ink-3);
-  margin-top:6px; margin-bottom:8px;
-}
-
-/* ── Info chips ── */
-.info-chips {
-  display:flex; flex-direction:column; gap:6px;
-  margin-bottom:12px;
-}
-
-.chip {
-  display:flex; align-items:center; gap:12px;
-  background:var(--bg-2); border:1px solid rgba(255,255,255,.05);
-  border-radius:var(--radius-sm); padding:11px 14px;
-}
-.chip-icon {
-  width:34px; height:34px; border-radius:8px;
-  background:var(--bg-3);
-  display:flex; align-items:center; justify-content:center;
-  font-size:17px; flex-shrink:0;
-}
-.chip-label { font-size:11px; color:var(--ink-3); }
-.chip-val   { font-size:14px; font-weight:700; color:var(--ink-1); }
-
-/* ── Cart btn ── */
-.cart-btn {
-  width:100%; padding:16px;
-  background:linear-gradient(135deg,var(--gold) 0%,#f97316 100%);
-  border:none; border-radius:var(--radius-md);
-  font-family:'Cairo',sans-serif; font-size:17px; font-weight:900;
-  color:#000; cursor:pointer; letter-spacing:.3px;
-  box-shadow:0 8px 28px rgba(240,165,0,.3);
-  transition:.2s; flex-shrink:0;
-}
-.cart-btn:active { transform:scale(.97); }
-
-/* ═══════════════════════════════════════════
-   IN-APP BROWSER WALL
-═══════════════════════════════════════════ */
-#inapp-wall {
-  display:none; position:fixed; inset:0; z-index:9999;
-  background:var(--bg-0);
-  flex-direction:column; align-items:center; justify-content:center;
-  padding:32px 24px; gap:18px; text-align:center;
-}
-#inapp-wall.show { display:flex; }
-
-.wall-icon { font-size:56px; }
-.wall-title { font-size:22px; font-weight:900; color:var(--ink-0); line-height:1.25; }
-.wall-sub   { font-size:14px; color:var(--ink-3); line-height:1.65; max-width:300px; }
-
-.wall-steps {
-  background:var(--bg-2); border:1px solid rgba(255,255,255,.05);
-  border-radius:var(--radius-lg); padding:18px 16px;
-  width:100%; max-width:340px;
-  display:flex; flex-direction:column; gap:12px; text-align:right;
-}
-.wall-step { display:flex; align-items:flex-start; gap:10px; }
-.wall-step-n {
-  width:26px; height:26px; border-radius:50%;
-  background:var(--accent); font-size:12px; font-weight:700;
-  display:flex; align-items:center; justify-content:center;
-  flex-shrink:0; color:#fff;
-}
-.wall-step-text strong { display:block; font-size:13px; color:var(--ink-1); margin-bottom:1px; }
-.wall-step-text span   { font-size:12px; color:var(--ink-3); }
-
-.copy-btn {
-  width:100%; max-width:340px; padding:14px;
-  background:var(--bg-2); border:1.5px solid rgba(124,111,255,.3);
-  border-radius:var(--radius-md);
-  font-family:'Cairo',sans-serif; font-size:14px; font-weight:700;
-  color:var(--accent); cursor:pointer; transition:.18s;
-  display:flex; align-items:center; justify-content:center; gap:8px;
-}
-
-/* ═══════════════════════════════════════════
-   TOAST
-═══════════════════════════════════════════ */
-.toast {
-  position:fixed; bottom:28px; left:50%;
-  transform:translateX(-50%) translateY(12px);
-  background:var(--green); color:#003d23;
-  padding:10px 22px; border-radius:50px;
-  font-size:14px; font-weight:700;
-  opacity:0; transition:.25s; z-index:1000;
-  white-space:nowrap; pointer-events:none;
-}
-.toast.show  { opacity:1; transform:translateX(-50%) translateY(0); }
-.toast.error { background:var(--red); color:#fff; }
-
-/* ═══════════════════════════════════════════
-   LOADING SPINNER
-═══════════════════════════════════════════ */
-.spinner-wrap {
-  display:flex; flex-direction:column; align-items:center;
-  justify-content:center; gap:14px; padding:60px 0;
-}
-.spinner {
-  width:40px; height:40px; border:3px solid var(--bg-3);
-  border-top-color:var(--accent); border-radius:50%;
-  animation:spin .7s linear infinite;
-}
-@keyframes spin { to { transform:rotate(360deg); } }
+/* TOAST */
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(10px);
+  background:var(--green);color:#003d23;padding:9px 20px;border-radius:50px;
+  font-size:13px;font-weight:700;opacity:0;transition:.22s;z-index:1000;
+  white-space:nowrap;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.err{background:var(--red);color:#fff}
 </style>
 </head>
 <body>
-
-<div class="ambient"></div>
-
+<div class="amb"></div>
 <div class="app">
-
-  <!-- Header -->
-  <header class="header">
+  <header class="hdr">
     <div class="logo">TEAM<em>STORE</em></div>
-    <div class="step-pill">خطوة <b id="step-num">1</b> من 3</div>
+    <div class="step-pill">خطوة <b id="snum">1</b> من 3</div>
   </header>
-
   <div class="screens">
 
-    <!-- ══ SCREEN 1: MODEL ══ -->
-    <div class="screen active" id="s-model">
+    <!-- S1: MODEL -->
+    <div class="screen active" id="s1">
       <div class="s1-hero">
         <div class="eyebrow">🎯 الخطوة الأولى</div>
         <h1>إيه موديل آيفونك؟</h1>
         <p>اختار الموديل عشان نعرض الجراب عليه بشكل حقيقي</p>
       </div>
-
-      <div class="series-tabs" id="series-tabs"></div>
-      <div class="model-grid" id="model-grid"></div>
-
+      <div class="series-tabs" id="stabs"></div>
+      <div class="mgrid" id="mgrid"></div>
       <div style="flex:1"></div>
-      <button class="cta-btn" id="btn-continue" disabled onclick="goTo('s-scan')">
-        استمر لمسح الجراب ←
-      </button>
+      <button class="cta" id="btn-next" disabled onclick="goTo('s2')">استمر لمسح الجراب ←</button>
     </div>
 
-    <!-- ══ SCREEN 2: SCAN ══ -->
-    <div class="screen" id="s-scan">
-      <button class="back-btn" onclick="goTo('s-model')">← رجوع</button>
-
-      <div style="text-align:center;padding:0 0 14px">
+    <!-- S2: SCAN -->
+    <div class="screen" id="s2">
+      <button class="back-btn" onclick="goTo('s1')">← رجوع</button>
+      <div class="s2-top">
         <div class="eyebrow">📷 الخطوة الثانية</div>
-        <div style="font-size:20px;font-weight:900;color:var(--ink-0);margin-top:6px">سكان باركود الجراب</div>
-        <div style="font-size:13px;color:var(--ink-3);margin-top:4px">وجّه الكاميرا على الباركود الموجود على المنتج</div>
+        <h2>سكان باركود الجراب</h2>
+        <p>وجّه الكاميرا على الباركود الموجود على المنتج</p>
       </div>
-
-      <div class="scanner-box">
-        <video id="scanner-video" autoplay playsinline muted></video>
+      <div class="scan-box">
+        <video id="scan-vid" autoplay playsinline muted></video>
         <div class="scan-ui">
-          <div class="scan-corners">
-            <span></span>
-            <div class="scan-beam"></div>
-          </div>
+          <div class="scan-frame"><span></span><div class="scan-beam"></div></div>
         </div>
       </div>
-
-      <p class="scanner-hint">بيتعرف تلقائياً — مش محتاج تضغط حاجة</p>
-
+      <p class="scan-hint">بيتعرف تلقائياً — مش محتاج تضغط حاجة</p>
       <div class="divider">أو ادخل الكود يدوياً</div>
-
       <div class="manual-row">
-        <input type="text" id="manual-code" placeholder="مثال: 1" />
+        <input type="text" id="mcode" placeholder="مثال: 1" />
         <button onclick="handleManual()">بحث</button>
       </div>
     </div>
 
-    <!-- ══ SCREEN 3: RESULT ══ -->
-    <div class="screen" id="s-result">
-      <button class="back-btn" onclick="goTo('s-scan')">← امسح جراب تاني</button>
-
-      <div class="result-header">
-        <div>
-          <div class="result-name" id="r-name">—</div>
-          <div class="result-sku" id="r-sku">—</div>
-        </div>
-        <div class="result-price" id="r-price">—</div>
+    <!-- S3: RESULT -->
+    <div class="screen" id="s3">
+      <button class="back-btn" onclick="goTo('s2')">← امسح جراب تاني</button>
+      <div class="r-hdr">
+        <div><div class="r-name" id="rn">—</div><div class="r-sku" id="rsk">—</div></div>
+        <div class="r-price" id="rp">—</div>
       </div>
-
-      <div class="view-tabs">
-        <button class="view-tab active" onclick="switchTab('mockup',this)">📸 صورة واقعية</button>
-        <button class="view-tab" onclick="switchTab('3d',this)">🌀 عرض 3D</button>
+      <div class="vtabs">
+        <button class="vtab on" onclick="vtab('mockup',this)">📸 صورة واقعية</button>
+        <button class="vtab" onclick="vtab('3d',this)">🌀 عرض 3D</button>
       </div>
-
-      <!-- MOCKUP TAB -->
-      <div class="tab-panel active" id="tab-mockup">
+      <div class="tpanel on" id="tp-mockup">
         <div class="mockup-stage">
-          <div class="phone-svg-wrap" id="phone-svg-wrap">
-            <!-- SVG injected by JS -->
-            <div class="case-img-overlay" id="case-overlay"></div>
+          <div class="phone-wrap" id="pwrap">
+            <canvas class="case-canvas" id="case-c"></canvas>
           </div>
         </div>
       </div>
-
-      <!-- 3D TAB -->
-      <div class="tab-panel" id="tab-3d">
-        <canvas id="canvas3d"></canvas>
+      <div class="tpanel" id="tp-3d">
+        <canvas id="c3d"></canvas>
         <p class="drag-hint">اسحب لتدوير الموبايل 🔄</p>
       </div>
-
-      <!-- Info -->
-      <div class="info-chips">
-        <div class="chip">
-          <div class="chip-icon">📱</div>
-          <div><div class="chip-label">متوافق مع</div><div class="chip-val" id="r-compat">—</div></div>
-        </div>
-        <div class="chip">
-          <div class="chip-icon">🎨</div>
-          <div><div class="chip-label">اللون</div><div class="chip-val" id="r-color">—</div></div>
-        </div>
-        <div class="chip">
-          <div class="chip-icon">✅</div>
-          <div><div class="chip-label">الحالة</div><div class="chip-val" style="color:var(--green)">متوفر في المتجر</div></div>
-        </div>
+      <div class="chips">
+        <div class="chip"><div class="chip-ic">📱</div><div><div class="chip-lbl">متوافق مع</div><div class="chip-val" id="rco">—</div></div></div>
+        <div class="chip"><div class="chip-ic">🎨</div><div><div class="chip-lbl">اللون</div><div class="chip-val" id="rcl">—</div></div></div>
+        <div class="chip"><div class="chip-ic">✅</div><div><div class="chip-lbl">الحالة</div><div class="chip-val" style="color:var(--green)">متوفر في المتجر</div></div></div>
       </div>
-
       <button class="cart-btn">🛒 أضف للسلة</button>
     </div>
 
-  </div><!-- /screens -->
-</div><!-- /app -->
+  </div>
+</div>
 
-<!-- In-app wall -->
-<div id="inapp-wall">
-  <div class="wall-icon">🔒</div>
-  <div class="wall-title">افتح في Safari<br>عشان الكاميرا تشتغل</div>
-  <div class="wall-sub">الكاميرا مش بتشتغل جوه تطبيقات زي Instagram أو Facebook — محتاج Safari</div>
-  <div class="wall-steps">
-    <div style="font-size:13px;font-weight:700;color:var(--ink-1)">إزاي تفتحها في Safari؟</div>
-    <div class="wall-step"><div class="wall-step-n">1</div><div class="wall-step-text"><strong>افتح الـ menu</strong><span>اضغط ··· أو سهم المشاركة ↗</span></div></div>
-    <div class="wall-step"><div class="wall-step-n">2</div><div class="wall-step-text"><strong>اختار "Open in Safari"</strong><span>أو "افتح في Safari"</span></div></div>
-    <div class="wall-step"><div class="wall-step-n">3</div><div class="wall-step-text"><strong>اسمح بالكاميرا</strong><span>اضغط Allow لما يسألك</span></div></div>
+<!-- in-app wall -->
+<div id="iaw">
+  <div class="iaw-icon">🔒</div>
+  <div class="iaw-title">افتح في Safari<br>عشان الكاميرا تشتغل</div>
+  <div class="iaw-sub">الكاميرا مش بتشتغل جوه Instagram أو Facebook — محتاج Safari</div>
+  <div class="iaw-steps">
+    <div style="font-size:12px;font-weight:700;color:var(--ink1)">إزاي تفتحها في Safari؟</div>
+    <div class="iaw-step"><div class="iaw-n">1</div><div class="iaw-st"><strong>افتح الـ menu</strong><span>اضغط ··· أو سهم المشاركة ↗</span></div></div>
+    <div class="iaw-step"><div class="iaw-n">2</div><div class="iaw-st"><strong>اختار "Open in Safari"</strong><span>أو "افتح في Safari"</span></div></div>
+    <div class="iaw-step"><div class="iaw-n">3</div><div class="iaw-st"><strong>اسمح بالكاميرا</strong><span>اضغط Allow لما يسألك</span></div></div>
   </div>
   <button class="copy-btn" onclick="copyUrl()">📋 انسخ الرابط</button>
 </div>
-
-<!-- Toast -->
 <div class="toast" id="toast"></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.18.6/umd/index.min.js"></script>
-
 <script>
-/* ═══════════════════════════════════════════
-   DATA
-═══════════════════════════════════════════ */
-const SERIES = [
-  { id:'std',  label:'Standard' },
-  { id:'pro',  label:'Pro' },
-  { id:'plus', label:'Plus / Max' },
+/* ══ DATA ══ */
+const SERIES=[{id:'std',l:'Standard'},{id:'pro',l:'Pro'},{id:'plus',l:'Plus / Max'}];
+const MODELS=[
+  {id:'11',  s:'std',  n:'iPhone 11',      sub:'6.1"',       notch:'notch',  lenses:2, tall:false},
+  {id:'12',  s:'std',  n:'iPhone 12',      sub:'6.1"',       notch:'notch',  lenses:2, tall:false},
+  {id:'13',  s:'std',  n:'iPhone 13',      sub:'6.1"',       notch:'snotch', lenses:2, tall:false},
+  {id:'14',  s:'std',  n:'iPhone 14',      sub:'6.1"',       notch:'snotch', lenses:2, tall:false},
+  {id:'15',  s:'std',  n:'iPhone 15',      sub:'6.1"',       notch:'island', lenses:2, tall:false},
+  {id:'16',  s:'std',  n:'iPhone 16',      sub:'6.1"',       notch:'island', lenses:2, tall:false},
+  {id:'14p', s:'pro',  n:'iPhone 14 Pro',  sub:'6.1" Pro',   notch:'island', lenses:3, tall:false},
+  {id:'15p', s:'pro',  n:'iPhone 15 Pro',  sub:'6.1" Pro',   notch:'island', lenses:3, tall:false},
+  {id:'16p', s:'pro',  n:'iPhone 16 Pro',  sub:'6.3" Pro',   notch:'island', lenses:3, tall:false},
+  {id:'14pl',s:'plus', n:'iPhone 14 Plus', sub:'6.7"',       notch:'snotch', lenses:2, tall:true},
+  {id:'15pm',s:'plus', n:'15 Pro Max',     sub:'6.7" Pro',   notch:'island', lenses:3, tall:true},
+  {id:'16pm',s:'plus', n:'16 Pro Max',     sub:'6.9" Pro',   notch:'island', lenses:3, tall:true},
 ];
-
-const MODELS = [
-  // Standard
-  { id:'11',   series:'std',  name:'iPhone 11',  sub:'6.1" LCD', notch:'notch', lenses:2, year:2019 },
-  { id:'12',   series:'std',  name:'iPhone 12',  sub:'6.1" OLED', notch:'notch', lenses:2, year:2020 },
-  { id:'13',   series:'std',  name:'iPhone 13',  sub:'6.1" OLED', notch:'small-notch', lenses:2, year:2021 },
-  { id:'14',   series:'std',  name:'iPhone 14',  sub:'6.1" OLED', notch:'small-notch', lenses:2, year:2022 },
-  { id:'15',   series:'std',  name:'iPhone 15',  sub:'6.1" OLED', notch:'island', lenses:2, year:2023 },
-  { id:'16',   series:'std',  name:'iPhone 16',  sub:'6.1" OLED', notch:'island', lenses:2, year:2024 },
-  // Pro
-  { id:'14p',  series:'pro',  name:'iPhone 14 Pro', sub:'6.1" Pro', notch:'island', lenses:3, year:2022 },
-  { id:'15p',  series:'pro',  name:'iPhone 15 Pro', sub:'6.1" Pro', notch:'island', lenses:3, year:2023 },
-  { id:'16p',  series:'pro',  name:'iPhone 16 Pro', sub:'6.3" Pro', notch:'island', lenses:3, year:2024 },
-  // Plus/Max
-  { id:'12m',  series:'plus', name:'iPhone 12 Mini', sub:'5.4"', notch:'notch', lenses:2, year:2020 },
-  { id:'14pl', series:'plus', name:'iPhone 14 Plus',  sub:'6.7"', notch:'small-notch', lenses:2, year:2022 },
-  { id:'15pm', series:'plus', name:'iPhone 15 Pro Max', sub:'6.7" Pro', notch:'island', lenses:3, year:2023 },
-  { id:'16pm', series:'plus', name:'iPhone 16 Pro Max', sub:'6.9" Pro', notch:'island', lenses:3, year:2024 },
-];
-
-const PRODUCTS = {
-  '1': {
-    name:'جراب كريستال شفاف', sku:'1',
-    price:'149 جنيه', color:'شفاف / كريستال',
-    image:'https://miamicenters.com/wp-content/uploads/2025/09/2.png',
-  },
-  'DEMO': {
-    name:'جراب سيليكون أسود', sku:'DEMO',
-    price:'129 جنيه', color:'أسود',
-    image:'https://miamicenters.com/wp-content/uploads/2025/09/2.png',
-  },
+const PRODUCTS={
+  '1':{n:'جراب كريستال شفاف',sku:'1',price:'149 جنيه',color:'شفاف / كريستال',
+    img:'https://miamicenters.com/wp-content/uploads/2025/09/2.png'},
 };
 
-/* ═══════════════════════════════════════════
-   STATE
-═══════════════════════════════════════════ */
-let activeSeries   = 'std';
-let selectedModel  = null;
-let currentProduct = null;
-let scanner        = null;
-let scanRunning    = false;
-let three          = { init:false, scene:null, cam:null, renderer:null, group:null };
-let activeTab      = 'mockup';
+/* ══ STATE ══ */
+let curSeries='std', selModel=null, curProduct=null;
+let scanner=null, scanning=false;
+let T={init:false,scene:null,cam:null,ren:null,grp:null};
+let curTab='mockup';
 
-/* ═══════════════════════════════════════════
-   IN-APP BROWSER DETECTION
-═══════════════════════════════════════════ */
+/* ══ IN-APP DETECT ══ */
 (function(){
-  const ua = navigator.userAgent||'';
-  const isInApp =
-    /Instagram|FBAN|FBAV|Twitter|TikTok|Snapchat|WhatsApp|Line\//.test(ua) ||
-    (/iPhone|iPad/.test(ua) && !/Safari/.test(ua) && !/Chrome/.test(ua) && !/CriOS/.test(ua));
-  if(isInApp) document.getElementById('inapp-wall').classList.add('show');
+  const ua=navigator.userAgent||'';
+  if(/Instagram|FBAN|FBAV|Twitter|TikTok|Snapchat|WhatsApp|Line\//.test(ua)||
+    (/iPhone|iPad/.test(ua)&&!/Safari/.test(ua)&&!/Chrome/.test(ua)&&!/CriOS/.test(ua)))
+    document.getElementById('iaw').classList.add('show');
 })();
+function copyUrl(){navigator.clipboard?.writeText(location.href).then(()=>toast('✅ تم نسخ الرابط'))}
 
-function copyUrl(){
-  navigator.clipboard?.writeText(location.href).then(()=>toast('✅ تم نسخ الرابط'));
-}
-
-/* ═══════════════════════════════════════════
-   BUILD UI
-═══════════════════════════════════════════ */
+/* ══ BUILD MODEL UI ══ */
 function buildUI(){
-  // Series tabs
-  const st = document.getElementById('series-tabs');
+  const st=document.getElementById('stabs');
   SERIES.forEach(s=>{
-    const b = document.createElement('button');
-    b.className = 'series-tab' + (s.id===activeSeries?' active':'');
-    b.textContent = s.label;
-    b.onclick = ()=>{ activeSeries=s.id; buildGrid(); updateSeriesTabs(); };
+    const b=document.createElement('button');
+    b.className='stab'+(s.id===curSeries?' on':'');
+    b.textContent=s.l;
+    b.onclick=()=>{curSeries=s.id;buildGrid();st.querySelectorAll('.stab').forEach((x,i)=>x.classList.toggle('on',SERIES[i].id===curSeries))};
     st.appendChild(b);
   });
   buildGrid();
 }
 
-function updateSeriesTabs(){
-  document.querySelectorAll('.series-tab').forEach((b,i)=>{
-    b.classList.toggle('active', SERIES[i].id===activeSeries);
-  });
-}
-
 function buildGrid(){
-  const grid = document.getElementById('model-grid');
-  grid.innerHTML='';
-  MODELS.filter(m=>m.series===activeSeries).forEach(m=>{
-    const div = document.createElement('div');
-    div.className = 'model-card'+(selectedModel?.id===m.id?' selected':'');
-    div.innerHTML = `
-      ${phoneSVGthumb(m)}
-      <div class="model-card-name">${m.name.replace('iPhone ','')}</div>
-      <div class="model-card-sub">${m.sub}</div>
-    `;
-    div.onclick = ()=>selectModel(m);
-    grid.appendChild(div);
+  const g=document.getElementById('mgrid');g.innerHTML='';
+  MODELS.filter(m=>m.s===curSeries).forEach(m=>{
+    const d=document.createElement('div');
+    d.className='mcard'+(selModel?.id===m.id?' on':'');
+    d.innerHTML=thumbSVG(m)+`<div class="mcard-name">${m.n.replace('iPhone ','')}</div><div class="mcard-sub">${m.sub}</div>`;
+    d.onclick=()=>{selModel=m;document.querySelectorAll('.mcard').forEach(c=>c.classList.remove('on'));d.classList.add('on');document.getElementById('btn-next').disabled=false};
+    g.appendChild(d);
   });
 }
 
-function selectModel(m){
-  selectedModel = m;
-  document.querySelectorAll('.model-card').forEach(c=>c.classList.remove('selected'));
-  event.currentTarget.classList.add('selected');
-  document.getElementById('btn-continue').disabled = false;
-}
-
-/* ═══════════════════════════════════════════
-   PHONE SVG GENERATORS
-═══════════════════════════════════════════ */
-function phoneSVGthumb(model){
-  // Tiny thumbnail SVG for model card
-  const hasDI = model.notch === 'island';
-  const hasSmall = model.notch === 'small-notch';
-  const isPro3 = model.lenses >= 3;
-  return `<svg class="model-thumb" viewBox="0 0 40 68" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <!-- Body -->
-    <rect x="1" y="1" width="38" height="66" rx="9" fill="#1a1a2a" stroke="#3a3a5a" stroke-width="1.5"/>
-    <!-- Screen -->
-    <rect x="3.5" y="3.5" width="33" height="61" rx="7" fill="#0d0d1a"/>
-    <!-- Notch/Island -->
-    ${hasDI
-      ? `<rect x="11" y="6" width="18" height="5" rx="2.5" fill="#000"/>`
-      : hasSmall
-      ? `<rect x="14" y="5.5" width="12" height="5" rx="2.5" fill="#000"/>`
-      : `<rect x="10" y="4" width="20" height="6" rx="3" fill="#000"/>`
-    }
-    <!-- Camera -->
-    ${isPro3
-      ? `<rect x="23" y="10" width="13" height="13" rx="3" fill="#0d0d1a" stroke="#2a2a3a" stroke-width="1"/>
-         <circle cx="26.5" cy="13.5" r="2" fill="#070714"/><circle cx="32.5" cy="13.5" r="2" fill="#070714"/>
-         <circle cx="26.5" cy="19.5" r="2" fill="#070714"/>`
-      : `<rect x="24" y="11" width="11" height="7" rx="2.5" fill="#0d0d1a" stroke="#2a2a3a" stroke-width="1"/>
-         <circle cx="27" cy="14.5" r="2" fill="#070714"/><circle cx="32" cy="14.5" r="2" fill="#070714"/>`
-    }
-    <!-- Side btn -->
-    <rect x="39" y="20" width="2" height="14" rx="1" fill="#2a2a3a"/>
+/* ══ THUMB SVG ══ */
+function thumbSVG(m){
+  const di=m.notch==='island',sn=m.notch==='snotch',p3=m.lenses>=3;
+  return `<svg class="mcard-svg" viewBox="0 0 38 64" fill="none">
+    <rect x="1" y="1" width="36" height="62" rx="8" fill="#181828" stroke="#363656" stroke-width="1.5"/>
+    <rect x="3" y="3" width="32" height="58" rx="6.5" fill="#0c0c1a"/>
+    ${di?`<rect x="10" y="5.5" width="18" height="4.5" rx="2.2" fill="#000"/>`:
+      sn?`<rect x="13" y="5" width="12" height="4.5" rx="2.2" fill="#000"/>`:
+         `<rect x="9" y="4" width="20" height="5.5" rx="2.7" fill="#000"/>`}
+    ${p3?`<rect x="21" y="9" width="14" height="14" rx="3" fill="#0c0c1a" stroke="#252535" stroke-width=".8"/>
+      <circle cx="24.5" cy="12.5" r="2" fill="#070712"/><circle cx="31" cy="12.5" r="2" fill="#070712"/>
+      <circle cx="24.5" cy="19" r="2" fill="#070712"/>`:
+      `<rect x="22" y="10" width="12" height="7" rx="2.5" fill="#0c0c1a" stroke="#252535" stroke-width=".8"/>
+      <circle cx="25.5" cy="13.5" r="2" fill="#070712"/><circle cx="31" cy="13.5" r="2" fill="#070712"/>`}
+    <rect x="37" y="18" width="2" height="13" rx="1" fill="#2a2a44"/>
   </svg>`;
 }
 
-/* Full-size phone SVG for mockup */
-function phoneSVGFull(model){
-  const hasDI    = model.notch === 'island';
-  const hasSmall = model.notch === 'small-notch';
-  const isPro3   = model.lenses >= 3;
-  const isMax    = model.sub.includes('6.7') || model.sub.includes('6.9');
+/* ══ NAVIGATION ══ */
+function goTo(id){
+  const cur=document.querySelector('.screen.active');
+  const nxt=document.getElementById(id);
+  if(cur===nxt)return;
+  cur.classList.add('exit');
+  setTimeout(()=>cur.classList.remove('active','exit'),260);
+  nxt.classList.add('active');
+  const steps={s1:1,s2:2,s3:3};
+  document.getElementById('snum').textContent=steps[id]||1;
+  if(id==='s2')startScanner(); else stopScanner();
+}
 
-  // Aspect: tall phones are taller
-  const W = 100, H = isMax ? 210 : 200;
-  const CR = 22; // corner radius
-  const BW = 1.8; // border width
+/* ══ SCANNER ══ */
+async function startScanner(){
+  if(scanning)return;
+  try{
+    const ZX=window.ZXing;
+    if(!ZX)return;
+    scanner=new ZX.BrowserMultiFormatReader();
+    await scanner.decodeFromConstraints(
+      {video:{facingMode:'environment'}},
+      document.getElementById('scan-vid'),
+      (res)=>{ if(res){scanning=false;processCode(res.getText())} }
+    );
+    scanning=true;
+  }catch(e){toast('تعذّر تشغيل الكاميرا — استخدم الإدخال اليدوي','err')}
+}
+function stopScanner(){if(scanner){scanner.reset();scanner=null}scanning=false}
+function handleManual(){const v=document.getElementById('mcode').value.trim();if(v)processCode(v)}
 
+/* ══ PROCESS CODE ══ */
+function processCode(code){
+  stopScanner();
+  let p=PRODUCTS[code]||PRODUCTS[code.toUpperCase()]||PRODUCTS[code.toLowerCase()];
+  if(!p){
+    p={n:'جراب كريستال شفاف',sku:code,price:'149 جنيه',color:'شفاف / كريستال',
+      img:'https://miamicenters.com/wp-content/uploads/2025/09/2.png'};
+    toast('⚠️ كود تجريبي');
+  }
+  curProduct=p;
+  renderResult();
+  goTo('s3');
+}
+
+/* ══ RENDER RESULT ══ */
+function renderResult(){
+  const p=curProduct, m=selModel||MODELS[0];
+  document.getElementById('rn').textContent=p.n;
+  document.getElementById('rsk').textContent='كود: '+p.sku;
+  document.getElementById('rp').textContent=p.price;
+  document.getElementById('rco').textContent=m.n;
+  document.getElementById('rcl').textContent=p.color;
+  drawPhoneMockup(m,p.img);
+  if(curTab==='3d') setTimeout(init3D,50);
+}
+
+/* ══ MOCKUP — Canvas-based (no CORS issue) ══ */
+function drawPhoneMockup(m, imgUrl){
+  const wrap=document.getElementById('pwrap');
+  const cc=document.getElementById('case-c');
+
+  // Inject phone SVG first
+  const oldSvg=wrap.querySelector('svg');
+  if(oldSvg) oldSvg.remove();
+  const svgStr=fullPhoneSVG(m);
+  const parser=new DOMParser();
+  const svgEl=parser.parseFromString(svgStr,'image/svg+xml').documentElement;
+  wrap.insertBefore(svgEl,cc);
+
+  // Set canvas size matching phone wrap
+  const isMax=m.tall;
+  const PH=isMax?220:200, PW=100;
+
+  cc.width=200; cc.height=isMax?440:400;
+  cc.style.width='100%';
+  cc.classList.remove('show');
+
+  // Load & draw case image
+  const img=new Image();
+  img.crossOrigin='anonymous';
+  img.onload=()=>{
+    const ctx=cc.getContext('2d');
+    ctx.clearRect(0,0,cc.width,cc.height);
+    // Draw with contain-fit
+    const ratio=Math.min(cc.width/img.width, cc.height/img.height);
+    const dw=img.width*ratio, dh=img.height*ratio;
+    const dx=(cc.width-dw)/2, dy=(cc.height-dh)/2;
+    ctx.drawImage(img,dx,dy,dw,dh);
+    cc.classList.add('show');
+  };
+  img.onerror=()=>{
+    // Fallback: tinted overlay
+    const ctx=cc.getContext('2d');
+    ctx.fillStyle='rgba(124,111,255,0.15)';
+    ctx.fillRect(0,0,cc.width,cc.height);
+    cc.classList.add('show');
+  };
+  img.src=imgUrl+'?t='+Date.now(); // cache bust
+}
+
+/* ══ FULL PHONE SVG ══ */
+function fullPhoneSVG(m){
+  const di=m.notch==='island',sn=m.notch==='snotch',p3=m.lenses>=3;
+  const W=100,H=m.tall?215:200,R=20;
   return `<svg viewBox="0 0 ${W} ${H}" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="bodyGrad" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#2a2a40"/>
-      <stop offset="50%" stop-color="#1a1a2a"/>
-      <stop offset="100%" stop-color="#0d0d1a"/>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#252538"/><stop offset="60%" stop-color="#181826"/><stop offset="100%" stop-color="#0e0e1c"/>
     </linearGradient>
-    <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="rgba(255,255,255,.06)"/>
-      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+    <linearGradient id="scr" x1="0" y1="0" x2=".3" y2="1">
+      <stop offset="0%" stop-color="#111124"/><stop offset="100%" stop-color="#07070e"/>
     </linearGradient>
-    <linearGradient id="screenGrad" x1="0" y1="0" x2=".4" y2="1">
-      <stop offset="0%" stop-color="#12122a"/>
-      <stop offset="100%" stop-color="#07070e"/>
-    </linearGradient>
-    <filter id="shadow" x="-20%" y="-10%" width="140%" height="130%">
-      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="rgba(0,0,0,.6)"/>
-    </filter>
+    <radialGradient id="gloss" cx="30%" cy="20%" r="60%">
+      <stop offset="0%" stop-color="rgba(255,255,255,.07)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+    </radialGradient>
   </defs>
-
   <!-- Body -->
-  <rect x="${BW/2}" y="${BW/2}" width="${W-BW}" height="${H-BW}" rx="${CR}" fill="url(#bodyGrad)" stroke="#3a3a5a" stroke-width="${BW}" filter="url(#shadow)"/>
-
+  <rect x="1" y="1" width="${W-2}" height="${H-2}" rx="${R}" fill="url(#bg)" stroke="#35354f" stroke-width="1.8"/>
   <!-- Gloss -->
-  <rect x="${BW/2}" y="${BW/2}" width="${W-BW}" height="${H/2}" rx="${CR}" fill="url(#gloss)"/>
-
+  <rect x="1" y="1" width="${W-2}" height="${H/2}" rx="${R}" fill="url(#gloss)"/>
   <!-- Screen -->
-  <rect x="5" y="5" width="${W-10}" height="${H-10}" rx="${CR-2}" fill="url(#screenGrad)"/>
-
-  <!-- Notch / Dynamic Island -->
-  ${hasDI
-    ? `<rect x="${W/2-15}" y="10" width="30" height="8" rx="4" fill="#000"/>`
-    : hasSmall
-    ? `<rect x="${W/2-12}" y="9" width="24" height="8" rx="4" fill="#000"/>`
-    : `<rect x="${W/2-18}" y="8" width="36" height="10" rx="5" fill="#000"/>`
-  }
-
-  <!-- Camera module -->
-  ${isPro3 ? `
-    <rect x="${W-34}" y="18" width="26" height="26" rx="7" fill="#0a0a14" stroke="#252535" stroke-width="1.2"/>
-    <circle cx="${W-28}" cy="25" r="5" fill="#07070e" stroke="#1a1a2a" stroke-width=".8"/>
-    <circle cx="${W-14}" cy="25" r="5" fill="#07070e" stroke="#1a1a2a" stroke-width=".8"/>
-    <circle cx="${W-28}" cy="37" r="5" fill="#07070e" stroke="#1a1a2a" stroke-width=".8"/>
-    <circle cx="${W-28}" cy="25" r="2" fill="#0d0d20"/>
-    <circle cx="${W-14}" cy="25" r="2" fill="#0d0d20"/>
-    <circle cx="${W-28}" cy="37" r="2" fill="#0d0d20"/>
-    <circle cx="${W-14}" cy="37" r="3.5" fill="#1a1a28" stroke="#252535" stroke-width=".8"/>
-  ` : `
-    <rect x="${W-30}" y="20" width="22" height="13" rx="5" fill="#0a0a14" stroke="#252535" stroke-width="1.2"/>
-    <circle cx="${W-25}" cy="26.5" r="4.5" fill="#07070e" stroke="#1a1a2a" stroke-width=".8"/>
-    <circle cx="${W-12}" cy="26.5" r="4.5" fill="#07070e" stroke="#1a1a2a" stroke-width=".8"/>
-    <circle cx="${W-25}" cy="26.5" r="2" fill="#0d0d20"/>
-    <circle cx="${W-12}" cy="26.5" r="2" fill="#0d0d20"/>
+  <rect x="4.5" y="4.5" width="${W-9}" height="${H-9}" rx="${R-2}" fill="url(#scr)"/>
+  <!-- Notch -->
+  ${di?`<rect x="${W/2-14}" y="8.5" width="28" height="7" rx="3.5" fill="#000"/>`:
+    sn?`<rect x="${W/2-11}" y="8" width="22" height="7" rx="3.5" fill="#000"/>`:
+       `<rect x="${W/2-17}" y="7" width="34" height="8.5" rx="4.2" fill="#000"/>`}
+  <!-- Camera bump -->
+  ${p3?`
+  <rect x="${W-32}" y="16" width="24" height="24" rx="6" fill="#0b0b18" stroke="#222232" stroke-width="1.2"/>
+  <circle cx="${W-26}" cy="22" r="4.5" fill="#07070e" stroke="#1e1e2e" stroke-width=".7"/>
+  <circle cx="${W-13}" cy="22" r="4.5" fill="#07070e" stroke="#1e1e2e" stroke-width=".7"/>
+  <circle cx="${W-26}" cy="34" r="4.5" fill="#07070e" stroke="#1e1e2e" stroke-width=".7"/>
+  <circle cx="${W-26}" cy="22" r="2" fill="#040410"/>
+  <circle cx="${W-13}" cy="22" r="2" fill="#040410"/>
+  <circle cx="${W-26}" cy="34" r="2" fill="#040410"/>
+  <circle cx="${W-13}" cy="34" r="3.2" fill="#151520" stroke="#222232" stroke-width=".7"/>
+  <circle cx="${W-7.5}" cy="16.5" r="2" fill="#1a1200" stroke="#2a2000" stroke-width=".5"/>`:
+  `
+  <rect x="${W-29}" y="18" width="21" height="11" rx="4.5" fill="#0b0b18" stroke="#222232" stroke-width="1.2"/>
+  <circle cx="${W-24}" cy="23.5" r="4" fill="#07070e" stroke="#1e1e2e" stroke-width=".7"/>
+  <circle cx="${W-12}" cy="23.5" r="4" fill="#07070e" stroke="#1e1e2e" stroke-width=".7"/>
+  <circle cx="${W-24}" cy="23.5" r="1.8" fill="#040410"/>
+  <circle cx="${W-12}" cy="23.5" r="1.8" fill="#040410"/>
   `}
-
-  <!-- Flash -->
-  <circle cx="${W-10}" cy="${isPro3?38:32}" r="2.5" fill="#2a1800" stroke="#3a2200" stroke-width=".6"/>
-
   <!-- Side buttons -->
-  <rect x="${W-1}" y="55" width="2.5" height="24" rx="1.2" fill="#2a2a40"/>
-  <rect x="-1.5" y="48" width="2.5" height="14" rx="1.2" fill="#2a2a40"/>
-  <rect x="-1.5" y="68" width="2.5" height="22" rx="1.2" fill="#2a2a40"/>
-
-  <!-- Screen glow dots (decorative) -->
-  <circle cx="${W/2}" cy="${H/2}" r="3" fill="rgba(124,111,255,.06)"/>
+  <rect x="${W-1.2}" y="52" width="2.8" height="20" rx="1.3" fill="#303048"/>
+  <rect x="-1.6" y="45" width="2.8" height="13" rx="1.3" fill="#303048"/>
+  <rect x="-1.6" y="64" width="2.8" height="20" rx="1.3" fill="#303048"/>
+  <!-- Screen shine -->
+  <rect x="4.5" y="4.5" width="${(W-9)*0.4}" height="${H-9}" rx="${R-2}" fill="rgba(255,255,255,.012)"/>
 </svg>`;
 }
 
-/* ═══════════════════════════════════════════
-   NAVIGATION
-═══════════════════════════════════════════ */
-function goTo(id){
-  const all = document.querySelectorAll('.screen');
-  const current = document.querySelector('.screen.active');
-  const next = document.getElementById(id);
-
-  if(current === next) return;
-
-  current.classList.add('exit');
-  setTimeout(()=>{ current.classList.remove('active','exit'); },280);
-
-  next.classList.add('active');
-
-  const steps = { 's-model':1, 's-scan':2, 's-result':3 };
-  document.getElementById('step-num').textContent = steps[id]||1;
-
-  if(id==='s-scan') startScanner();
-  else stopScanner();
-}
-
-/* ═══════════════════════════════════════════
-   SCANNER
-═══════════════════════════════════════════ */
-async function startScanner(){
-  if(scanRunning) return;
-  try{
-    const ZX = window.ZXing;
-    if(!ZX){ console.warn('ZXing missing'); return; }
-    scanner = new ZX.BrowserMultiFormatReader();
-    await scanner.decodeFromConstraints(
-      { video:{ facingMode:'environment' } },
-      document.getElementById('scanner-video'),
-      (res, err)=>{
-        if(res){ scanRunning=false; processCode(res.getText()); }
-      }
-    );
-    scanRunning = true;
-  }catch(e){
-    console.warn('Scanner:',e);
-    toast('تعذّر تشغيل الكاميرا — استخدم الإدخال اليدوي','error');
-  }
-}
-
-function stopScanner(){
-  if(scanner){ scanner.reset(); scanner=null; }
-  scanRunning=false;
-}
-
-function handleManual(){
-  const v = document.getElementById('manual-code').value.trim();
-  if(v) processCode(v);
-}
-
-/* ═══════════════════════════════════════════
-   PROCESS CODE
-═══════════════════════════════════════════ */
-function processCode(code){
-  stopScanner();
-  code = code.toUpperCase();
-  let product = PRODUCTS[code] || PRODUCTS[code.toLowerCase()];
-
-  // Fallback demo
-  if(!product){
-    product = {
-      name:'جراب كريستال شفاف', sku:code,
-      price:'149 جنيه', color:'شفاف / كريستال',
-      image:'https://miamicenters.com/wp-content/uploads/2025/09/2.png',
-    };
-    toast('⚠️ كود تجريبي — عرض نموذجي');
-  }
-
-  currentProduct = product;
-  renderResult();
-  goTo('s-result');
-}
-
-/* ═══════════════════════════════════════════
-   RENDER RESULT
-═══════════════════════════════════════════ */
-function renderResult(){
-  const p = currentProduct;
-  const m = selectedModel || MODELS[0];
-
-  document.getElementById('r-name').textContent   = p.name;
-  document.getElementById('r-sku').textContent    = `كود: ${p.sku}`;
-  document.getElementById('r-price').textContent  = p.price;
-  document.getElementById('r-compat').textContent = m.name;
-  document.getElementById('r-color').textContent  = p.color;
-
-  // Inject phone SVG
-  const wrap = document.getElementById('phone-svg-wrap');
-  const overlay = document.getElementById('case-overlay');
-  wrap.innerHTML = phoneSVGFull(m);
-  wrap.appendChild(overlay);
-
-  // Apply case image
-  overlay.classList.remove('show');
-  overlay.style.backgroundImage = `url(${p.image})`;
-
-  // Adjust overlay shape to match phone
-  const isMax = m.sub.includes('6.7') || m.sub.includes('6.9');
-  overlay.style.aspectRatio = isMax ? '100/210' : '100/200';
-
-  setTimeout(()=> overlay.classList.add('show'), 150);
-
-  // Prime 3D in background
-  if(activeTab==='3d') init3D();
-}
-
-/* ═══════════════════════════════════════════
-   TABS
-═══════════════════════════════════════════ */
-function switchTab(id, btn){
-  document.querySelectorAll('.view-tab').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('tab-'+id).classList.add('active');
-  activeTab = id;
+/* ══ VIEW TABS ══ */
+function vtab(id,btn){
+  document.querySelectorAll('.vtab').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.tpanel').forEach(p=>p.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('tp-'+id).classList.add('on');
+  curTab=id;
   if(id==='3d') requestAnimationFrame(()=>requestAnimationFrame(init3D));
 }
 
-/* ═══════════════════════════════════════════
-   THREE.JS — CINEMATIC PHONE
-═══════════════════════════════════════════ */
+/* ══ THREE.JS 3D ══ */
 function init3D(){
-  if(three.init){ resize3D(); return; }
+  const canvas=document.getElementById('c3d');
+  const W=canvas.clientWidth||340, H=canvas.clientHeight||350;
+  if(W===0){setTimeout(init3D,80);return}
 
-  const canvas = document.getElementById('canvas3d');
-  const W = canvas.clientWidth  || 340;
-  const H = canvas.clientHeight || 360;
+  if(T.init){
+    T.ren.setSize(W,H); T.cam.aspect=W/H; T.cam.updateProjectionMatrix(); return;
+  }
+  T.init=true;
 
-  if(W===0||H===0){ setTimeout(init3D,80); return; }
+  const scene=new THREE.Scene(); T.scene=scene;
+  const cam=new THREE.PerspectiveCamera(38,W/H,.1,100);
+  cam.position.set(0,.2,4.5); T.cam=cam;
 
-  three.init = true;
+  const ren=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+  ren.setSize(W,H); ren.setPixelRatio(Math.min(devicePixelRatio,2.5));
+  ren.toneMapping=THREE.ACESFilmicToneMapping; ren.toneMappingExposure=1.15;
+  ren.shadowMap.enabled=true; ren.shadowMap.type=THREE.PCFSoftShadowMap;
+  T.ren=ren;
 
-  // Scene
-  const scene = new THREE.Scene();
-  three.scene = scene;
-  scene.background = null;
-
-  // Camera
-  const cam = new THREE.PerspectiveCamera(38, W/H, 0.1, 100);
-  cam.position.set(0, 0, 4.2);
-  three.cam = cam;
-
-  // Renderer
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
-  renderer.setSize(W, H);
-  renderer.setPixelRatio(Math.min(devicePixelRatio,2.5));
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.1;
-  three.renderer = renderer;
-
-  // Lights — cinematic 3-point
-  const ambient = new THREE.AmbientLight(0x8080ff, 0.3);
-  scene.add(ambient);
-
-  const key = new THREE.DirectionalLight(0xffffff, 2.5);
-  key.position.set(2.5, 3, 4);
-  key.castShadow = true;
-  scene.add(key);
-
-  const fill = new THREE.DirectionalLight(0x6060ff, 0.8);
-  fill.position.set(-3, 0, 2);
-  scene.add(fill);
-
-  const rim = new THREE.DirectionalLight(0xa078ff, 1.2);
-  rim.position.set(-1, -3, -3);
-  scene.add(rim);
-
-  // Environment (simple gradient)
-  const envTex = new THREE.CubeCamera; // skip, use lights only
+  // Lights
+  scene.add(new THREE.AmbientLight(0x8888cc,.4));
+  const key=new THREE.DirectionalLight(0xffffff,2.8);
+  key.position.set(2,3,4); key.castShadow=true; scene.add(key);
+  const fill=new THREE.DirectionalLight(0x6666ff,.9);
+  fill.position.set(-3,.5,2); scene.add(fill);
+  const rim=new THREE.DirectionalLight(0xaa88ff,1.4);
+  rim.position.set(-1,-3,-3); scene.add(rim);
+  const top=new THREE.DirectionalLight(0xffffff,.6);
+  top.position.set(0,5,0); scene.add(top);
 
   // Build phone
-  const group = buildPhone3D();
-  scene.add(group);
-  three.group = group;
+  const grp=buildPhone(); T.grp=grp; scene.add(grp);
+  grp.rotation.set(.08,-.28,0);
 
   // Drag
-  let drag=false, px=0, py=0, vx=0, vy=0;
-  canvas.addEventListener('mousedown', e=>{ drag=true; px=e.clientX; py=e.clientY; vx=vy=0; });
-  canvas.addEventListener('touchstart', e=>{ drag=true; px=e.touches[0].clientX; py=e.touches[0].clientY; vx=vy=0; },{passive:true});
-  window.addEventListener('mouseup', ()=>drag=false);
-  window.addEventListener('touchend', ()=>drag=false);
-  canvas.addEventListener('mousemove', e=>{
-    if(!drag)return;
-    vx=(e.clientY-py)*.012; vy=(e.clientX-px)*.012;
-    px=e.clientX; py=e.clientY;
-  });
-  canvas.addEventListener('touchmove', e=>{
-    if(!drag)return;
-    vx=(e.touches[0].clientY-py)*.012; vy=(e.touches[0].clientX-px)*.012;
-    px=e.touches[0].clientX; py=e.touches[0].clientY;
-  },{passive:true});
+  let drag=false,px=0,py=0,vx=0,vy=0;
+  canvas.addEventListener('mousedown',e=>{drag=true;px=e.clientX;py=e.clientY;vx=vy=0});
+  canvas.addEventListener('touchstart',e=>{drag=true;px=e.touches[0].clientX;py=e.touches[0].clientY;vx=vy=0},{passive:true});
+  window.addEventListener('mouseup',()=>drag=false);
+  window.addEventListener('touchend',()=>drag=false);
+  canvas.addEventListener('mousemove',e=>{if(!drag)return;vx=(e.clientY-py)*.013;vy=(e.clientX-px)*.013;px=e.clientX;py=e.clientY});
+  canvas.addEventListener('touchmove',e=>{if(!drag)return;vx=(e.touches[0].clientY-py)*.013;vy=(e.touches[0].clientX-px)*.013;px=e.touches[0].clientX;py=e.touches[0].clientY},{passive:true});
 
-  // Animate
-  const clock = new THREE.Clock();
+  const clk=new THREE.Clock();
   (function loop(){
     requestAnimationFrame(loop);
-    const t = clock.getDelta();
-    if(drag){ vx*=.9; vy*=.9; }
-    else {
-      vx*=.94; vy*=.94;
-      // Gentle auto-rotate when idle
-      if(Math.abs(vx)<.001 && Math.abs(vy)<.001) vy += .005;
-    }
-    group.rotation.x += vx;
-    group.rotation.y += vy;
-    group.rotation.x = Math.max(-Math.PI/3, Math.min(Math.PI/3, group.rotation.x));
-    // Subtle float
-    group.position.y = Math.sin(clock.elapsedTime*.6) * .04;
-    renderer.render(scene, cam);
+    vx*=drag?.88:.94; vy*=drag?.88:.94;
+    if(!drag&&Math.abs(vy)<.001) vy+=.006;
+    grp.rotation.x+=vx; grp.rotation.y+=vy;
+    grp.rotation.x=Math.max(-1.1,Math.min(1.1,grp.rotation.x));
+    grp.position.y=Math.sin(clk.elapsedTime*.55)*.05;
+    ren.render(scene,cam);
   })();
 
-  // Apply texture
-  applyCase3D();
+  loadCaseTexture();
 }
 
-function buildPhone3D(){
-  const g = new THREE.Group();
-  const m = selectedModel || MODELS[0];
-  const isPro3 = m.lenses >= 3;
-  const isMax  = m.sub.includes('6.7') || m.sub.includes('6.9');
+function buildPhone(){
+  const g=new THREE.Group();
+  const m=selModel||MODELS[0];
+  const isPro=m.lenses>=3, isMax=m.tall;
+  const W=1.22, H=isMax?2.65:2.42, D=.092, R=.21;
 
-  const H = isMax ? 2.6 : 2.4;
-  const W = 1.22;
-  const D = 0.095;
-  const R = 0.22; // corner radius (simulated with segment count)
+  // Rounded body via ExtrudeGeometry
+  const sh=new THREE.Shape();
+  sh.moveTo(-W/2+R,-H/2); sh.lineTo(W/2-R,-H/2);
+  sh.quadraticCurveTo(W/2,-H/2,W/2,-H/2+R);
+  sh.lineTo(W/2,H/2-R); sh.quadraticCurveTo(W/2,H/2,W/2-R,H/2);
+  sh.lineTo(-W/2+R,H/2); sh.quadraticCurveTo(-W/2,H/2,-W/2,H/2-R);
+  sh.lineTo(-W/2,-H/2+R); sh.quadraticCurveTo(-W/2,-H/2,-W/2+R,-H/2);
 
-  // ── Body ──
-  const bodyGeo = roundedBoxGeometry(W, H, D, R, 4);
-  const bodyMat = new THREE.MeshStandardMaterial({
-    color: 0x1a1a2a,
-    metalness: isPro3 ? 0.92 : 0.4,
-    roughness: isPro3 ? 0.08 : 0.35,
+  const geo=new THREE.ExtrudeGeometry(sh,{depth:D,bevelEnabled:true,bevelThickness:R*.28,bevelSize:R*.28,bevelSegments:5});
+  geo.center();
+
+  const mat=new THREE.MeshStandardMaterial({
+    color:isPro?0x111118:0x181826,
+    metalness:isPro?.92:.35,roughness:isPro?.07:.38
   });
-  const body = new THREE.Mesh(bodyGeo, bodyMat);
-  body.castShadow = true;
-  g.add(body);
+  const body=new THREE.Mesh(geo,mat); body.castShadow=true; g.add(body);
 
-  // ── Screen glass (front) ──
-  const screenGeo = new THREE.PlaneGeometry(W*.88, H*.92);
-  const screenMat = new THREE.MeshStandardMaterial({
-    color: 0x07070e,
-    roughness: 0.0,
-    metalness: 0.0,
-    emissive: 0x080820,
-    emissiveIntensity: 0.5,
-  });
-  const screen = new THREE.Mesh(screenGeo, screenMat);
-  screen.position.z = D/2 + 0.001;
-  g.add(screen);
+  // Screen
+  const scr=new THREE.Mesh(
+    new THREE.PlaneGeometry(W*.87,H*.93),
+    new THREE.MeshStandardMaterial({color:0x060614,roughness:.02,metalness:0,emissive:0x060628,emissiveIntensity:.6})
+  );
+  scr.position.z=D/2+.002; g.add(scr);
 
-  // ── Screen shine ──
-  const shineGeo = new THREE.PlaneGeometry(W*.88, H*.92);
-  const shineMat = new THREE.MeshStandardMaterial({
-    color: 0xffffff, transparent:true, opacity:0.04,
-    roughness: 0, metalness: 0,
-  });
-  const shine = new THREE.Mesh(shineGeo, shineMat);
-  shine.position.z = D/2 + 0.002;
-  g.add(shine);
+  // Dynamic Island
+  const hasDI=m.notch==='island';
+  const diH=.06, diW=hasDI?.22:.28;
+  const di=new THREE.Mesh(
+    new THREE.CylinderGeometry(diH/2,diH/2,diW,24),
+    new THREE.MeshStandardMaterial({color:0x000000,roughness:.1})
+  );
+  di.rotateZ(Math.PI/2); di.position.set(0,H/2-.16,D/2+.003); g.add(di);
 
-  // ── Dynamic Island / notch ──
-  const hasDI = m.notch === 'island';
-  if(hasDI){
-    const diGeo = new THREE.CylinderGeometry(0.05, 0.05, 0.22, 24);
-    diGeo.rotateZ(Math.PI/2);
-    const diMat = new THREE.MeshStandardMaterial({ color:0x000000, roughness:.1 });
-    const di = new THREE.Mesh(diGeo, diMat);
-    di.position.set(0, H/2 - 0.16, D/2 + 0.003);
-    g.add(di);
-  } else {
-    const nGeo = new THREE.CylinderGeometry(0.07, 0.07, 0.3, 24);
-    nGeo.rotateZ(Math.PI/2);
-    const nMat = new THREE.MeshStandardMaterial({ color:0x000000, roughness:.1 });
-    const n = new THREE.Mesh(nGeo, nMat);
-    n.position.set(0, H/2 - 0.18, D/2 + 0.003);
-    g.add(n);
-  }
-
-  // ── Camera module ──
-  const camBumpH = isPro3 ? 0.38 : 0.22;
-  const camBumpGeo = roundedBoxGeometry(0.36, camBumpH, 0.03, 0.06, 3);
-  const camBumpMat = new THREE.MeshStandardMaterial({
-    color: isPro3 ? 0x111118 : 0x111118,
-    metalness: 0.85, roughness: 0.12,
-  });
-  const camBump = new THREE.Mesh(camBumpGeo, camBumpMat);
-  camBump.position.set(W*.27, H*.28, D/2 + 0.016);
-  g.add(camBump);
+  // Camera bump
+  const cbW=isPro?.38:.24, cbH=isPro?.38:.14;
+  const cbSh=new THREE.Shape();
+  const cbR=.06;
+  cbSh.moveTo(-cbW/2+cbR,-cbH/2); cbSh.lineTo(cbW/2-cbR,-cbH/2);
+  cbSh.quadraticCurveTo(cbW/2,-cbH/2,cbW/2,-cbH/2+cbR);
+  cbSh.lineTo(cbW/2,cbH/2-cbR); cbSh.quadraticCurveTo(cbW/2,cbH/2,cbW/2-cbR,cbH/2);
+  cbSh.lineTo(-cbW/2+cbR,cbH/2); cbSh.quadraticCurveTo(-cbW/2,cbH/2,-cbW/2,cbH/2-cbR);
+  cbSh.lineTo(-cbW/2,-cbH/2+cbR); cbSh.quadraticCurveTo(-cbW/2,-cbH/2,-cbW/2+cbR,-cbH/2);
+  const cbGeo=new THREE.ExtrudeGeometry(cbSh,{depth:.025,bevelEnabled:true,bevelThickness:.012,bevelSize:.012,bevelSegments:3});
+  cbGeo.center();
+  const cbMat=new THREE.MeshStandardMaterial({color:0x0d0d18,metalness:.88,roughness:.1});
+  const cb=new THREE.Mesh(cbGeo,cbMat);
+  cb.position.set(W*.26,H*.27,D/2+.014); g.add(cb);
 
   // Lenses
-  const lensPositions = isPro3
-    ? [[-0.08, 0.09],[0.08, 0.09],[-0.08,-0.06]]
-    : [[-0.07, 0],   [0.07, 0]];
-
-  lensPositions.forEach(([lx,ly])=>{
-    const lensRing = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.072,0.072,0.01,32),
-      new THREE.MeshStandardMaterial({ color:0x222230, metalness:.9, roughness:.1 })
+  const lpos=isPro?[[-.09,.09],[.09,.09],[-.09,-.06]]:[[-.08,0],[.08,0]];
+  lpos.forEach(([lx,ly])=>{
+    const ring=new THREE.Mesh(
+      new THREE.CylinderGeometry(.072,.072,.008,32),
+      new THREE.MeshStandardMaterial({color:0x1e1e2e,metalness:.9,roughness:.08})
     );
-    lensRing.rotateX(Math.PI/2);
-    lensRing.position.set(W*.27+lx, H*.28+ly, D/2+0.03);
-    g.add(lensRing);
-
-    const lens = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.055,0.055,0.015,32),
-      new THREE.MeshStandardMaterial({ color:0x030308, metalness:.3, roughness:.05 })
+    ring.rotateX(Math.PI/2); ring.position.set(W*.26+lx,H*.27+ly,D/2+.03); g.add(ring);
+    const lens=new THREE.Mesh(
+      new THREE.CylinderGeometry(.052,.052,.012,32),
+      new THREE.MeshStandardMaterial({color:0x030308,metalness:.3,roughness:.04})
     );
-    lens.rotateX(Math.PI/2);
-    lens.position.set(W*.27+lx, H*.28+ly, D/2+0.035);
-    g.add(lens);
+    lens.rotateX(Math.PI/2); lens.position.set(W*.26+lx,H*.27+ly,D/2+.035); g.add(lens);
+    // Lens shine
+    const shine=new THREE.Mesh(
+      new THREE.CircleGeometry(.018,16),
+      new THREE.MeshStandardMaterial({color:0x8888ff,transparent:true,opacity:.3,roughness:0})
+    );
+    shine.position.set(W*.26+lx-.015,H*.27+ly+.015,D/2+.042); g.add(shine);
   });
 
-  // ── Side frame highlights ──
-  // Right
-  const sideR = new THREE.Mesh(
-    new THREE.BoxGeometry(0.008, H*.5, D*.4),
-    new THREE.MeshStandardMaterial({ color:isPro3?0x888899:0x333344, metalness:.9, roughness:.05 })
+  // Case mesh (front)
+  const caseMat=new THREE.MeshStandardMaterial({transparent:true,opacity:0,roughness:.65,metalness:0,depthWrite:false});
+  const caseMesh=new THREE.Mesh(new THREE.PlaneGeometry(W*1.05,H*1.03),caseMat);
+  caseMesh.position.z=D/2+.005; caseMesh.name='case'; g.add(caseMesh);
+
+  // Back glass
+  const back=new THREE.Mesh(
+    new THREE.PlaneGeometry(W*.93,H*.96),
+    new THREE.MeshStandardMaterial({color:isPro?0x0e0e18:0x131320,roughness:isPro?.04:.28,metalness:isPro?.9:.08})
   );
-  sideR.position.set(W/2-0.004, 0, 0);
-  g.add(sideR);
+  back.rotation.y=Math.PI; back.position.z=-D/2-.001; g.add(back);
 
-  // ── Back glass ──
-  const backGeo = new THREE.PlaneGeometry(W*.94, H*.96);
-  const backMat = new THREE.MeshStandardMaterial({
-    color: isPro3 ? 0x111118 : 0x141420,
-    roughness: isPro3 ? 0.05 : 0.3,
-    metalness: isPro3 ? 0.9 : 0.1,
-  });
-  const back = new THREE.Mesh(backGeo, backMat);
-  back.rotation.y = Math.PI;
-  back.position.z = -D/2 - 0.001;
-  g.add(back);
-
-  // ── Case overlay (front) ──
-  const caseGeo = new THREE.PlaneGeometry(W*1.04, H*1.02);
-  const caseMat = new THREE.MeshStandardMaterial({
-    color: 0xffffff, transparent:true, opacity:0,
-    roughness:.7, metalness:.0,
-    depthWrite: false,
-  });
-  const caseMesh = new THREE.Mesh(caseGeo, caseMat);
-  caseMesh.position.z = D/2 + 0.004;
-  caseMesh.name = 'case';
-  g.add(caseMesh);
-
-  g.rotation.y = -0.3;
-  g.rotation.x = 0.1;
   return g;
 }
 
-// Rounded box helper using CylinderGeometry edges (approximation via BoxGeometry with high segments)
-function roundedBoxGeometry(w, h, d, r, segs){
-  // Use ExtrudeGeometry for proper rounded box
-  const shape = new THREE.Shape();
-  shape.moveTo(-w/2+r, -h/2);
-  shape.lineTo( w/2-r, -h/2);
-  shape.quadraticCurveTo( w/2, -h/2, w/2, -h/2+r);
-  shape.lineTo( w/2,  h/2-r);
-  shape.quadraticCurveTo( w/2,  h/2, w/2-r,  h/2);
-  shape.lineTo(-w/2+r,  h/2);
-  shape.quadraticCurveTo(-w/2,  h/2,-w/2,  h/2-r);
-  shape.lineTo(-w/2, -h/2+r);
-  shape.quadraticCurveTo(-w/2, -h/2,-w/2+r,-h/2);
-
-  const geo = new THREE.ExtrudeGeometry(shape, {
-    depth: d,
-    bevelEnabled: true,
-    bevelThickness: r*.3,
-    bevelSize: r*.3,
-    bevelSegments: segs,
-  });
-  geo.center();
-  return geo;
-}
-
-function applyCase3D(){
-  if(!three.group || !currentProduct?.image) return;
-  const caseMesh = three.group.getObjectByName('case');
-  if(!caseMesh) return;
-
-  const loader = new THREE.TextureLoader();
-  loader.crossOrigin = 'anonymous';
-  loader.load(
-    currentProduct.image,
-    tex=>{
-      caseMesh.material.map = tex;
-      caseMesh.material.opacity = 0.92;
-      caseMesh.material.needsUpdate = true;
-    },
+function loadCaseTexture(){
+  if(!T.grp||!curProduct?.img) return;
+  const mesh=T.grp.getObjectByName('case');
+  if(!mesh) return;
+  const loader=new THREE.TextureLoader();
+  loader.crossOrigin='anonymous';
+  loader.load(curProduct.img,
+    tex=>{mesh.material.map=tex;mesh.material.opacity=.92;mesh.material.needsUpdate=true},
     undefined,
-    ()=>{
-      // CORS fallback — subtle tint
-      caseMesh.material.color.set(0x7c6fff);
-      caseMesh.material.opacity = 0.18;
-      caseMesh.material.needsUpdate = true;
-    }
+    ()=>{mesh.material.color.set(0x7c6fff);mesh.material.opacity=.15;mesh.material.needsUpdate=true}
   );
 }
 
-function resize3D(){
-  if(!three.renderer || !three.cam) return;
-  const canvas = document.getElementById('canvas3d');
-  const W = canvas.clientWidth, H = canvas.clientHeight;
-  if(W && H){
-    three.renderer.setSize(W, H);
-    three.cam.aspect = W/H;
-    three.cam.updateProjectionMatrix();
-  }
+/* ══ TOAST ══ */
+function toast(msg,type=''){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.className='toast show '+type;
+  clearTimeout(el._t); el._t=setTimeout(()=>el.className='toast',2600);
 }
 
-/* ═══════════════════════════════════════════
-   TOAST
-═══════════════════════════════════════════ */
-function toast(msg, type=''){
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.className = 'toast show ' + type;
-  clearTimeout(el._t);
-  el._t = setTimeout(()=> el.className='toast', 2800);
-}
-
-/* ═══════════════════════════════════════════
-   INIT
-═══════════════════════════════════════════ */
+/* ══ INIT ══ */
 buildUI();
 </script>
 </body>
